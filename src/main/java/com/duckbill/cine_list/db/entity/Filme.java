@@ -8,18 +8,14 @@ import java.util.UUID;
 @Table(name = "filme")
 public class Filme {
 
-    @Id // Define que este atributo é a chave primária da tabela
-    @GeneratedValue
-    private UUID id;
+    @Id
+    private String id;
 
     @Column(nullable = false) // Define que o campo não pode ser nulo no banco de dados
     private String titulo;
 
     @Column // Define o usuário que criou o filme (chave estrangeira)
     private UUID createdBy;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now(); // Define a data de criação para o momento atual
 
     @Column(nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now(); // Define a data de atualização para o momento atual
@@ -30,16 +26,16 @@ public class Filme {
     @Column
     private LocalDateTime deletedAt; // Data de exclusão lógica
 
-    @Column(precision = 2, scale = 1)
+    @Column
     private Double nota; // Avaliação do filme
 
     // Getters e Setters
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -57,14 +53,6 @@ public class Filme {
 
     public void setCreatedBy(UUID createdBy) {
         this.createdBy = createdBy;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {

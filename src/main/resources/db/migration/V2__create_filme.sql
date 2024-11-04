@@ -6,5 +6,5 @@ CREATE TABLE filme (
    completed_at TIMESTAMP,
    deleted_at   TIMESTAMP,
    FOREIGN KEY (created_by) REFERENCES usuario(id) ON DELETE SET NULL,
-   nota         DECIMAL(2, 1) DEFAULT NULL -- com valores decimais de 0 a 10
+   nota         DOUBLE DEFAULT NULL -- com valores decimais de 0 a 10
 );

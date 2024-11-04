@@ -8,9 +8,8 @@ import java.util.UUID;
 @Table(name = "usuario") // Define a tabela "usuario" no banco de dados
 public class Usuario {
 
-    @Id // Define que este atributo é a chave primária da tabela
-    @GeneratedValue
-    private UUID id;
+    @Id
+    private String id;
 
     @Column(nullable = false, unique = true) // Define o e-mail como obrigatório e único
     private String email;
@@ -20,6 +19,9 @@ public class Usuario {
 
     @Column(nullable = false)
     private String senha;
+
+    @Column(nullable = false, unique = true)
+    private String cpf;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -32,11 +34,11 @@ public class Usuario {
 
     // Getters and Setters
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -64,12 +66,12 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public LocalDateTime getUpdatedAt() {

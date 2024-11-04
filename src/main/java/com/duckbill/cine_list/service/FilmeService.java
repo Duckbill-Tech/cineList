@@ -20,14 +20,17 @@ public class FilmeService {
 
     // Metodo para criar um novo filme com data de criação e atualização
     public Filme create(Filme filme) {
-        filme.setCreatedAt(LocalDateTime.now());
+        if (filme.getId() == null) {
+            filme.setId(UUID.randomUUID().toString());
+        }
         return filmeRepository.save(filme);
     }
+
 
     @PostConstruct
     public Filme generateRandomFilme() {
         Filme randomFilme = new Filme();
-
+        randomFilme.setId(UUID.randomUUID().toString());
         randomFilme.setTitulo("Filme " + new Random().nextInt(1000));
 
         return create(randomFilme);
