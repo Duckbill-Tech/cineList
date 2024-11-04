@@ -38,6 +38,7 @@ public class UsuarioServiceTest {
 
         when(usuarioRepository.findById(any())).thenReturn(Optional.of(usuario));
     }
+
     /* Teste para verificar se o metodo create de usuarioService lança uma exceção
          IllegalArgumentException ao tentar criar um usuário com um CPF inválido.*/
     @Test
@@ -47,6 +48,7 @@ public class UsuarioServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> usuarioService.create(usuario));
     }
+    
     /* Este teste verifica se o metodo getById retorna um Optional presente ao buscar um usuário
      com um ID válido (UUID.fromString("123e4567-e89b-12d3-a456-426614174000")),
      utilizando o usuário mock configurado em setUp.*/

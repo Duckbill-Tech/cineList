@@ -37,6 +37,12 @@ public class FilmeServiceTest {
         filme.setUpdatedAt(LocalDateTime.now());
     }
 
+    /* O teste testCreate simula o comportamento do metodo save do filmeRepository,
+     fazendo-o retornar o objeto filme sempre que é chamado com qualquer instância de Filme
+     Chama o metodo create do filmeService e verifica se:
+        - id do createdFilme não é nulo.
+        - título do createdFilme é igual ao título do filme mockado.
+        - metodo save foi chamado exatamente uma vez.*/
     @Test
     void testCreate() {
         when(filmeRepository.save(any(Filme.class))).thenReturn(filme);
@@ -47,6 +53,7 @@ public class FilmeServiceTest {
         verify(filmeRepository, times(1)).save(any(Filme.class));
     }
 
+    /* Este teste não será necessário*/
     @Test
     void testGenerateRandomFilme() {
         when(filmeRepository.save(any(Filme.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -57,6 +64,9 @@ public class FilmeServiceTest {
         verify(filmeRepository, times(1)).save(any(Filme.class));
     }
 
+    /* Testar getById com um filme válido e não deletado.
+    Configura o mock para retornar filme quando findById for chamado com o id (se o filme é retornado e se o título
+    do filme está correto).*/
     @Test
     void testGetByIdWithValidIdAndNotDeleted() {
         UUID id = UUID.fromString(filme.getId());
@@ -67,6 +77,7 @@ public class FilmeServiceTest {
         assertEquals(filme.getTitulo(), result.get().getTitulo());
     }
 
+    /* Verifica que um filme deletado não é retornado.*/
     @Test
     void testGetByIdWithDeletedFilme() {
         filme.setDeletedAt(LocalDateTime.now());
@@ -77,6 +88,7 @@ public class FilmeServiceTest {
         assertFalse(result.isPresent());
     }
 
+    /* Todos os filmes retornados não estão deletados.*/
     @Test
     void testGetAll() {
         Filme filme2 = new Filme();
@@ -91,6 +103,8 @@ public class FilmeServiceTest {
         assertTrue(filmes.stream().allMatch(f -> f.getDeletedAt() == null));
     }
 
+    /*Testa update, configurando o mock para que findById retorne o
+    filme e save retorne o mesmo objeto após atualização.*/
     @Test
     void testUpdate() {
         UUID id = UUID.fromString(filme.getId());
@@ -107,6 +121,8 @@ public class FilmeServiceTest {
         assertNotNull(updatedFilme.getUpdatedAt());
     }
 
+    /* Testa o cenário de atualização de um filme que não existe,
+    configurando findById para retornar vazio e esperando uma exceção RuntimeException.*/
     @Test
     void testUpdateFilmeNotFound() {
         UUID id = UUID.randomUUID();
@@ -115,6 +131,7 @@ public class FilmeServiceTest {
         assertThrows(RuntimeException.class, () -> filmeService.update(id, new Filme()));
     }
 
+    /* Testa delete, configurando o mock para que findById retorne o filme.*/
     @Test
     void testDelete() {
         UUID id = UUID.fromString(filme.getId());
@@ -125,6 +142,7 @@ public class FilmeServiceTest {
         verify(filmeRepository, times(1)).save(filme);
     }
 
+    /* Testa delete em um filme já deletado, garantindo que save não é chamado..*/
     @Test
     void testDeleteAlreadyDeleted() {
         filme.setDeletedAt(LocalDateTime.now());
