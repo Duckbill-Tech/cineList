@@ -1,1 +1,7 @@
 com/duckbill/cine_list/CineListApplication.class
+com/duckbill/cine_list/service/UsuarioService.class
+com/duckbill/cine_list/db/entity/Filme.class
+com/duckbill/cine_list/db/entity/Usuario.class
+com/duckbill/cine_list/db/repository/FilmeRepository.class
+com/duckbill/cine_list/db/repository/UsuarioRepository.class
+com/duckbill/cine_list/service/FilmeService.class
