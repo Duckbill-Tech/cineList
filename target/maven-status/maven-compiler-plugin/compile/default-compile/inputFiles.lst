@@ -1,4 +1,6 @@
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/CineListApplication.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/controller/FilmeController.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/controller/UsuarioController.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/db/entity/Filme.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/db/entity/Usuario.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/db/repository/FilmeRepository.java

@@ -76,23 +76,17 @@ public class UsuarioService {
 
     // Validação de CPF simplificada
     private boolean isValidCPF(String cpf) {
-        // Remover pontuações ('.', '-', etc.)
         String cpfClean = cpf.replaceAll("\\D", "");
 
-        // Verificar se tem 11 dígitos
         if (cpfClean.length() != 11) return false;
-
-        // Verificar se todos os dígitos são iguais (ex.: 111.111.111-11)
         if (cpfClean.chars().distinct().count() == 1) return false;
 
-        // Calcular os dígitos verificadores
         int[] pesos1 = {10, 9, 8, 7, 6, 5, 4, 3, 2};
         int[] pesos2 = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2};
 
         int digito1 = calcularDigito(cpfClean.substring(0, 9), pesos1);
         int digito2 = calcularDigito(cpfClean.substring(0, 9) + digito1, pesos2);
 
-        // Verificar se os dígitos calculados são iguais aos fornecidos
         return cpfClean.equals(cpfClean.substring(0, 9) + digito1 + digito2);
     }
 

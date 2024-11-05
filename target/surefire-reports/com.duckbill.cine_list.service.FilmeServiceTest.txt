@@ -1,4 +1,14 @@
 -------------------------------------------------------------------------------
 Test set: com.duckbill.cine_list.service.FilmeServiceTest
 -------------------------------------------------------------------------------
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.064 s -- in com.duckbill.cine_list.service.FilmeServiceTest
+Tests run: 8, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.108 s <<< FAILURE! -- in com.duckbill.cine_list.service.FilmeServiceTest
+com.duckbill.cine_list.service.FilmeServiceTest.testUpdate -- Time elapsed: 0.009 s <<< ERROR!
+java.lang.RuntimeException: Filme não encontrado
+	at com.duckbill.cine_list.service.FilmeService.lambda$update$4(FilmeService.java:77)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.duckbill.cine_list.service.FilmeService.update(FilmeService.java:77)
+	at com.duckbill.cine_list.service.FilmeServiceTest.testUpdate(FilmeServiceTest.java:157)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+

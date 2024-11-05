@@ -1,7 +1,6 @@
 package com.duckbill.cine_list.dto;
 
 import jakarta.validation.constraints.NotEmpty;
-
 import java.time.LocalDateTime;
 
 public class FilmeDTO {
@@ -15,20 +14,24 @@ public class FilmeDTO {
     private LocalDateTime updatedAt;
     private LocalDateTime completedAt;
     private LocalDateTime deletedAt;
+    private String createdById;
 
-    // Construtor, Getters e Setters
-
+    // Construtor padrão
     public FilmeDTO() {
     }
 
-    public FilmeDTO(String id, String titulo, Double nota, LocalDateTime updatedAt, LocalDateTime completedAt, LocalDateTime deletedAt) {
+    // Construtor com todos os parâmetros
+    public FilmeDTO(String id, String titulo, Double nota, LocalDateTime updatedAt, LocalDateTime completedAt, LocalDateTime deletedAt, String createdById) {
         this.id = id;
         this.titulo = titulo;
         this.nota = nota;
         this.updatedAt = updatedAt;
         this.completedAt = completedAt;
         this.deletedAt = deletedAt;
+        this.createdById = createdById;
     }
+
+    // Getters e Setters
 
     public String getId() {
         return id;
@@ -76,5 +79,13 @@ public class FilmeDTO {
 
     public void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public String getCreatedById() {
+        return createdById;
+    }
+
+    public void setCreatedById(String createdById) {
+        this.createdById = createdById;
     }
 }

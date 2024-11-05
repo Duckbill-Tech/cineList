@@ -1,20 +1,18 @@
 package com.duckbill.cine_list.service;
 
 import com.duckbill.cine_list.db.entity.Filme;
+import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.FilmeRepository;
+import com.duckbill.cine_list.db.repository.UsuarioRepository;
 import com.duckbill.cine_list.dto.FilmeDTO;
 import com.duckbill.cine_list.mapper.FilmeMapper;
-
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 
 
 @Service
@@ -24,16 +22,28 @@ public class FilmeService {
     private FilmeRepository filmeRepository;
 
     @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
     private FilmeMapper filmeMapper;
 
     // Metodo para criar um novo filme com data de criação e atualização
     public FilmeDTO create(FilmeDTO filmeDTO) {
-        Filme filme = FilmeMapper.toEntity(filmeDTO); // Converte DTO para entidade
+        Usuario createdBy = null;
+
+        if (filmeDTO.getCreatedById() != null) {
+            createdBy = usuarioRepository.findById(UUID.fromString(filmeDTO.getCreatedById()))
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        }
+
+        Filme filme = filmeMapper.toEntity(filmeDTO, createdBy);
+
         if (filme.getId() == null) {
             filme.setId(UUID.randomUUID().toString());
         }
+
         Filme savedFilme = filmeRepository.save(filme);
-        return FilmeMapper.toDto(savedFilme); // Converte entidade salva para DTO
+        return filmeMapper.toDto(savedFilme);
     }
 
     /* Metodo para buscar um filme pelo ID, garantindo que não esteja deletado
@@ -42,7 +52,7 @@ public class FilmeService {
     public Optional<FilmeDTO> getById(UUID id) {
         return filmeRepository.findById(id)
                 .filter(filme -> filme.getDeletedAt() == null)
-                .map(FilmeMapper::toDto); // Converte entidade para DTO
+                .map(filmeMapper::toDto);
     }
 
     // Metodo para listar todos os filmes que não estão deletados
@@ -50,7 +60,7 @@ public class FilmeService {
         return filmeRepository.findAll()
                 .stream()
                 .filter(filme -> filme.getDeletedAt() == null)
-                .map(FilmeMapper::toDto)
+                .map(filmeMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -62,7 +72,7 @@ public class FilmeService {
                     filme.setNota(filmeDTO.getNota());
                     filme.setUpdatedAt(LocalDateTime.now());
                     Filme updatedFilme = filmeRepository.save(filme);
-                    return FilmeMapper.toDto(updatedFilme);
+                    return filmeMapper.toDto(updatedFilme);
                 })
                 .orElseThrow(() -> new RuntimeException("Filme não encontrado"));
     }

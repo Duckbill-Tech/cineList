@@ -23,7 +23,8 @@ public class UsuarioDTO {
     private LocalDateTime deletedAt;
 
     // Construtores, Getters e Setters
-    public UsuarioDTO() {}
+    public UsuarioDTO() {
+    }
 
     public UsuarioDTO(String id, String nome, String email, String cpf, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = id;
@@ -90,6 +91,4 @@ public class UsuarioDTO {
     public void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
     }
-
-
 }

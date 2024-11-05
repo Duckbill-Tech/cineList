@@ -2,6 +2,7 @@ package com.duckbill.cine_list.db.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "usuario") // Define a tabela "usuario" no banco de dados
@@ -22,6 +23,9 @@ public class Usuario {
     @Column(nullable = false, unique = true)
     private String cpf;
 
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Filme> filmesCriados;
+
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -29,9 +33,9 @@ public class Usuario {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column
-    private LocalDateTime deletedAt = LocalDateTime.now();
+    private LocalDateTime deletedAt;
 
-    // Getters and Setters
+    // Getters e Setters
 
     public String getId() {
         return id;
@@ -73,6 +77,22 @@ public class Usuario {
         this.cpf = cpf;
     }
 
+    public List<Filme> getFilmesCriados() {
+        return filmesCriados;
+    }
+
+    public void setFilmesCriados(List<Filme> filmesCriados) {
+        this.filmesCriados = filmesCriados;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
@@ -87,12 +107,5 @@ public class Usuario {
 
     public void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
     }
 }

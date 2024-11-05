@@ -2,7 +2,6 @@ package com.duckbill.cine_list.db.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "filme")
@@ -11,23 +10,24 @@ public class Filme {
     @Id
     private String id;
 
-    @Column(nullable = false) // Define que o campo não pode ser nulo no banco de dados
+    @Column(nullable = false)
     private String titulo;
 
-    @Column // Define o usuário que criou o filme (chave estrangeira)
-    private UUID createdBy;
+    @ManyToOne
+    @JoinColumn(name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_filme_usuario"))
+    private Usuario createdBy;
 
     @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now(); // Define a data de atualização para o momento atual
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column
-    private LocalDateTime completedAt; // Data em que o filme foi marcado como completado (assistido)
+    private LocalDateTime completedAt;
 
     @Column
-    private LocalDateTime deletedAt; // Data de exclusão lógica
+    private LocalDateTime deletedAt;
 
     @Column
-    private Double nota; // Avaliação do filme
+    private Double nota;
 
     // Getters e Setters
 
@@ -47,11 +47,11 @@ public class Filme {
         this.titulo = titulo;
     }
 
-    public UUID getCreatedBy() {
+    public Usuario getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(UUID createdBy) {
+    public void setCreatedBy(Usuario createdBy) {
         this.createdBy = createdBy;
     }
 

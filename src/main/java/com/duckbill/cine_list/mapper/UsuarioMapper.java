@@ -2,7 +2,9 @@ package com.duckbill.cine_list.mapper;
 
 import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.dto.UsuarioDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UsuarioMapper {
 
     public static UsuarioDTO toDto(Usuario usuario) {
