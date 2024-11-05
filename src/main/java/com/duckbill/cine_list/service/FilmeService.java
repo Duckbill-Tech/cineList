@@ -23,6 +23,9 @@ public class FilmeService {
     @Autowired
     private FilmeRepository filmeRepository;
 
+    @Autowired
+    private FilmeMapper filmeMapper;
+
     // Metodo para criar um novo filme com data de criação e atualização
     public FilmeDTO create(FilmeDTO filmeDTO) {
         Filme filme = FilmeMapper.toEntity(filmeDTO); // Converte DTO para entidade

@@ -2,7 +2,9 @@ package com.duckbill.cine_list.mapper;
 
 import com.duckbill.cine_list.db.entity.Filme;
 import com.duckbill.cine_list.dto.FilmeDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FilmeMapper {
 
     public static FilmeDTO toDto(Filme filme) {
