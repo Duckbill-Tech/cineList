@@ -4,5 +4,7 @@
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/db/repository/FilmeRepository.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/db/repository/UsuarioRepository.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/FilmeDTO.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/mapper/FilmeMapper.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/mapper/UsuarioMapper.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/service/FilmeService.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/service/UsuarioService.java
