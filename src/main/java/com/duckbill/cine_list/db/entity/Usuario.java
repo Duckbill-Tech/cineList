@@ -2,7 +2,6 @@ package com.duckbill.cine_list.db.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "usuario") // Define a tabela "usuario" no banco de dados
@@ -88,5 +87,12 @@ public class Usuario {
 
     public void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
     }
 }

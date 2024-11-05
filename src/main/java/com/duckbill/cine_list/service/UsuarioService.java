@@ -2,6 +2,8 @@ package com.duckbill.cine_list.service;
 
 import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.UsuarioRepository;
+import com.duckbill.cine_list.dto.UsuarioDTO;
+import com.duckbill.cine_list.mapper.UsuarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,45 +11,62 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 
 @Service
 public class UsuarioService {
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
     // Metodo para criar um novo usuário com data de criação
-    public Usuario create(Usuario usuario) {
-        usuario.setId(UUID.randomUUID().toString()); // Define um UUID em formato String
+    public UsuarioDTO create(UsuarioDTO usuarioDTO) {
+        Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
+        usuario.setId(UUID.randomUUID().toString());
+
         if (!isValidCPF(usuario.getCpf())) {
             throw new IllegalArgumentException("CPF inválido");
         }
-        return usuarioRepository.save(usuario);
+
+        Usuario savedUsuario = usuarioRepository.save(usuario);
+        return UsuarioMapper.toDto(savedUsuario);
     }
 
-    public Optional<Usuario> getById(UUID id) {
-        return usuarioRepository.findById(id);
+    // Metodo para buscar um usuário pelo ID
+    public Optional<UsuarioDTO> getById(UUID id) {
+        return usuarioRepository.findById(id)
+                .map(UsuarioMapper::toDto);
     }
 
-    public List<Usuario> getAll() {
-        return usuarioRepository.findAll();
+    // Metodo para listar todos os usuários
+    public List<UsuarioDTO> getAll() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(UsuarioMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public Usuario update(UUID id, Usuario usuarioDetails) {
+    // Metodo para atualizar um usuário existente
+    public UsuarioDTO update(UUID id, UsuarioDTO usuarioDTO) {
         return usuarioRepository.findById(id)
                 .map(usuario -> {
-                    usuario.setNome(usuarioDetails.getNome());
-                    usuario.setEmail(usuarioDetails.getEmail());
-                    usuario.setSenha(usuarioDetails.getSenha());
-                    usuario.setCpf(usuarioDetails.getCpf());
+                    usuario.setNome(usuarioDTO.getNome());
+                    usuario.setEmail(usuarioDTO.getEmail());
+                    usuario.setCpf(usuarioDTO.getCpf());
+
                     if (!isValidCPF(usuario.getCpf())) {
                         throw new IllegalArgumentException("CPF inválido");
                     }
+
                     usuario.setUpdatedAt(LocalDateTime.now());
-                    return usuarioRepository.save(usuario);
+                    Usuario updatedUsuario = usuarioRepository.save(usuario);
+                    return UsuarioMapper.toDto(updatedUsuario);
                 })
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
+    // Metodo para deletar logicamente um usuário
     public void delete(UUID id) {
         usuarioRepository.findById(id).ifPresent(usuario -> {
             usuario.setDeletedAt(LocalDateTime.now());

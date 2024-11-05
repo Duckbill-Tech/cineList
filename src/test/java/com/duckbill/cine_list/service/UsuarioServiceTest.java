@@ -2,6 +2,8 @@ package com.duckbill.cine_list.service;
 
 import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.UsuarioRepository;
+import com.duckbill.cine_list.dto.UsuarioDTO;
+import com.duckbill.cine_list.mapper.UsuarioMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,9 @@ public class UsuarioServiceTest {
     private UsuarioService usuarioService;
 
     @MockBean
-    private UsuarioRepository usuarioRepository; // simular o acesso ao banco de dados.
+    private UsuarioRepository usuarioRepository; // Simula o acesso ao banco de dados.
+
+    private UsuarioDTO usuarioDTO;
 
     /* O metodo setUp é executado antes de cada teste, criando um Usuario de exemplo com dados válidos.
        Usa when(usuarioRepository.findById(any())) para simular o metodo findById do repositório,
@@ -36,6 +40,8 @@ public class UsuarioServiceTest {
         usuario.setNome("Test User");
         usuario.setEmail("test@example.com");
 
+        usuarioDTO = UsuarioMapper.toDto(usuario); // Cria o DTO baseado no usuário de exemplo
+
         when(usuarioRepository.findById(any())).thenReturn(Optional.of(usuario));
     }
 
@@ -43,10 +49,12 @@ public class UsuarioServiceTest {
          IllegalArgumentException ao tentar criar um usuário com um CPF inválido.*/
     @Test
     void testCreateUsuarioWithInvalidCpf() {
-        Usuario usuario = new Usuario();
-        usuario.setCpf("11111111111"); // CPF inválido
+        UsuarioDTO invalidUsuarioDTO = new UsuarioDTO();
+        invalidUsuarioDTO.setCpf("11111111111"); // CPF inválido
+        invalidUsuarioDTO.setNome("Invalid User");
+        invalidUsuarioDTO.setEmail("invalid@example.com");
 
-        assertThrows(IllegalArgumentException.class, () -> usuarioService.create(usuario));
+        assertThrows(IllegalArgumentException.class, () -> usuarioService.create(invalidUsuarioDTO));
     }
 
     /* Este teste verifica se o metodo getById retorna um Optional presente ao buscar um usuário
@@ -54,7 +62,10 @@ public class UsuarioServiceTest {
      utilizando o usuário mock configurado em setUp.*/
     @Test
     void testGetById() {
-        Optional<Usuario> usuario = usuarioService.getById(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
+        Optional<UsuarioDTO> usuario = usuarioService.getById(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
         assertTrue(usuario.isPresent());
+        assertEquals(usuarioDTO.getNome(), usuario.get().getNome());
+        assertEquals(usuarioDTO.getEmail(), usuario.get().getEmail());
+        assertEquals(usuarioDTO.getCpf(), usuario.get().getCpf());
     }
 }
