@@ -1,0 +1,2 @@
+CREATE SCHEMA IF NOT EXISTS schema_filme;
+CREATE SCHEMA IF NOT EXISTS schema_usuario;

@@ -2,6 +2,7 @@ package com.duckbill.cine_list.service;
 
 import com.duckbill.cine_list.db.entity.Filme;
 import com.duckbill.cine_list.db.repository.FilmeRepository;
+import com.duckbill.cine_list.dto.FilmeDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
 
 public class FilmeServiceTest {
 
+
     @Mock
     private FilmeRepository filmeRepository;
 
@@ -25,6 +27,8 @@ public class FilmeServiceTest {
     private FilmeService filmeService;
 
     private Filme filme;
+    private FilmeDTO filmeDTO;
+
 
     @BeforeEach
     void setUp() {
@@ -35,6 +39,8 @@ public class FilmeServiceTest {
         filme.setTitulo("Test Filme");
         filme.setNota(5.0);
         filme.setUpdatedAt(LocalDateTime.now());
+
+        filmeDTO = new FilmeDTO(filme.getId(), filme.getTitulo(), filme.getNota(), filme.getUpdatedAt(), filme.getCompletedAt(), filme.getDeletedAt());
     }
 
     /* O teste testCreate simula o comportamento do metodo save do filmeRepository,
@@ -47,20 +53,9 @@ public class FilmeServiceTest {
     void testCreate() {
         when(filmeRepository.save(any(Filme.class))).thenReturn(filme);
 
-        Filme createdFilme = filmeService.create(new Filme());
-        assertNotNull(createdFilme.getId());
-        assertEquals(filme.getTitulo(), createdFilme.getTitulo());
-        verify(filmeRepository, times(1)).save(any(Filme.class));
-    }
-
-    /* Este teste não será necessário*/
-    @Test
-    void testGenerateRandomFilme() {
-        when(filmeRepository.save(any(Filme.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Filme randomFilme = filmeService.generateRandomFilme();
-        assertNotNull(randomFilme.getId());
-        assertTrue(randomFilme.getTitulo().startsWith("Filme"), "O título do filme aleatório deve começar com 'Filme'");
+        FilmeDTO createdFilmeDTO = filmeService.create(filmeDTO);
+        assertNotNull(createdFilmeDTO.getId());
+        assertEquals(filmeDTO.getTitulo(), createdFilmeDTO.getTitulo());
         verify(filmeRepository, times(1)).save(any(Filme.class));
     }
 
@@ -72,9 +67,9 @@ public class FilmeServiceTest {
         UUID id = UUID.fromString(filme.getId());
         when(filmeRepository.findById(id)).thenReturn(Optional.of(filme));
 
-        Optional<Filme> result = filmeService.getById(id);
+        Optional<FilmeDTO> result = filmeService.getById(id);
         assertTrue(result.isPresent());
-        assertEquals(filme.getTitulo(), result.get().getTitulo());
+        assertEquals(filmeDTO.getTitulo(), result.get().getTitulo());
     }
 
     /* Verifica que um filme deletado não é retornado.*/
@@ -84,7 +79,7 @@ public class FilmeServiceTest {
         UUID id = UUID.fromString(filme.getId());
         when(filmeRepository.findById(id)).thenReturn(Optional.of(filme));
 
-        Optional<Filme> result = filmeService.getById(id);
+        Optional<FilmeDTO> result = filmeService.getById(id);
         assertFalse(result.isPresent());
     }
 
@@ -98,7 +93,7 @@ public class FilmeServiceTest {
 
         when(filmeRepository.findAll()).thenReturn(List.of(filme, filme2));
 
-        List<Filme> filmes = filmeService.getAll();
+        List<FilmeDTO> filmes = filmeService.getAll();
         assertEquals(2, filmes.size());
         assertTrue(filmes.stream().allMatch(f -> f.getDeletedAt() == null));
     }
@@ -108,17 +103,17 @@ public class FilmeServiceTest {
     @Test
     void testUpdate() {
         UUID id = UUID.fromString(filme.getId());
-        Filme updatedDetails = new Filme();
-        updatedDetails.setTitulo("Updated Title");
-        updatedDetails.setNota(9.0);
+        FilmeDTO updatedDetailsDTO = new FilmeDTO();
+        updatedDetailsDTO.setTitulo("Updated Title");
+        updatedDetailsDTO.setNota(9.0);
 
         when(filmeRepository.findById(id)).thenReturn(Optional.of(filme));
         when(filmeRepository.save(any(Filme.class))).thenReturn(filme);
 
-        Filme updatedFilme = filmeService.update(id, updatedDetails);
-        assertEquals("Updated Title", updatedFilme.getTitulo());
-        assertEquals(9, updatedFilme.getNota());
-        assertNotNull(updatedFilme.getUpdatedAt());
+        FilmeDTO updatedFilmeDTO = filmeService.update(id, updatedDetailsDTO);
+        assertEquals("Updated Title", updatedFilmeDTO.getTitulo());
+        assertEquals(9, updatedFilmeDTO.getNota());
+        assertNotNull(updatedFilmeDTO.getUpdatedAt());
     }
 
     /* Testa o cenário de atualização de um filme que não existe,
@@ -128,7 +123,7 @@ public class FilmeServiceTest {
         UUID id = UUID.randomUUID();
         when(filmeRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> filmeService.update(id, new Filme()));
+        assertThrows(RuntimeException.class, () -> filmeService.update(id, new FilmeDTO()));
     }
 
     /* Testa delete, configurando o mock para que findById retorne o filme.*/
