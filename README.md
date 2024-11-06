@@ -1,9 +1,9 @@
 # moviesList
 A3 - Sitemas distriuídos e Mobile
 
-Full stack aplicação para gerenciar listas de filmes.
+Aplicação Full stack para gerenciar listas de filmes.
 
-Command line for MySQL service via docker:
+Comando para inicializar o MySQL service via docker:
 
 ```sh
 docker run -d \
@@ -17,6 +17,27 @@ docker run -d \
     -p 3306:3306 \
     mysql:latest
 ```
+
+## Migrations 
+
+```
+mvn clean
+mvn compile
+```
+
+Rodar as migrations gerando tabelas (com o warning de versão):
+```
+mvn flyway:migrate -Dflyway.url=jdbc:mysql://localhost:3306/cinelist -Dflyway.user=cinelist -Dflyway.password=cinelist -Dflyway.locations=classpath:/db/migration
+```
+Usando o -q para silenciar warnings:
+```
+mvn -q  flyway:migrate -Dflyway.url=jdbc:mysql://localhost:3306/cinelist -Dflyway.user=cinelist -Dflyway.password=cinelist -Dflyway.locations=classpath:/db/migration
+```
+
+
+
+
+
 Comando para rodar teste:
 
 

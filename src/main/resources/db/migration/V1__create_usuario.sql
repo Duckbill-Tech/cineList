@@ -1,5 +1,5 @@
 CREATE TABLE usuario (
-    id         CHAR(36) PRIMARY KEY,
+    id         BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
     email      VARCHAR(255) NOT NULL UNIQUE,
     nome       VARCHAR(255) NOT NULL,
     senha      VARCHAR(255) NOT NULL,

@@ -28,21 +28,24 @@ public class UsuarioServiceTest {
     private UsuarioRepository usuarioRepository; // Simula o acesso ao banco de dados.
 
     private UsuarioDTO usuarioDTO;
+    private UUID usuarioId;
 
     /* O metodo setUp é executado antes de cada teste, criando um Usuario de exemplo com dados válidos.
        Usa when(usuarioRepository.findById(any())) para simular o metodo findById do repositório,
        retornando sempre um Optional com o usuário de exemplo ao buscar qualquer ID.*/
     @BeforeEach
     void setUp() {
+        usuarioId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000"); // UUID válido
+
         Usuario usuario = new Usuario();
-        usuario.setId("123e4567-e89b-12d3-a456-426614174000"); // UUID válido
+        usuario.setId(usuarioId); // Usa UUID diretamente
         usuario.setCpf("12345678909"); // CPF de exemplo válido
         usuario.setNome("Test User");
         usuario.setEmail("test@example.com");
 
         usuarioDTO = UsuarioMapper.toDto(usuario); // Cria o DTO baseado no usuário de exemplo
 
-        when(usuarioRepository.findById(any())).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.findById(any(UUID.class))).thenReturn(Optional.of(usuario));
     }
 
     /* Teste para verificar se o metodo create de usuarioService lança uma exceção
@@ -62,7 +65,7 @@ public class UsuarioServiceTest {
      utilizando o usuário mock configurado em setUp.*/
     @Test
     void testGetById() {
-        Optional<UsuarioDTO> usuario = usuarioService.getById(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
+        Optional<UsuarioDTO> usuario = usuarioService.getById(usuarioId);
         assertTrue(usuario.isPresent());
         assertEquals(usuarioDTO.getNome(), usuario.get().getNome());
         assertEquals(usuarioDTO.getEmail(), usuario.get().getEmail());

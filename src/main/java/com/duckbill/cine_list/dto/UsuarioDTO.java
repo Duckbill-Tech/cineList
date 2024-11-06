@@ -3,10 +3,11 @@ package com.duckbill.cine_list.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class UsuarioDTO {
 
-    private String id;
+    private UUID id;
 
     @Email(message = "Email deve ser válido.")
     @NotEmpty(message = "Email não pode ser vazio.")
@@ -29,7 +30,7 @@ public class UsuarioDTO {
     public UsuarioDTO() {
     }
 
-    public UsuarioDTO(String id, String nome, String email, String cpf, String senha, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+    public UsuarioDTO(UUID id, String nome, String email, String cpf, String senha, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -40,11 +41,11 @@ public class UsuarioDTO {
         this.deletedAt = deletedAt;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

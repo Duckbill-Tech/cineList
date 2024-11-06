@@ -2,16 +2,22 @@ package com.duckbill.cine_list.db.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "filme")
 public class Filme {
 
     @Id
-    private String id;
+    @GeneratedValue(generator = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
 
     @Column(nullable = false)
     private String titulo;
+
+    @Column(length = 255)
+    private String descricao;
 
     @ManyToOne
     @JoinColumn(name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_filme_usuario"))
@@ -31,16 +37,25 @@ public class Filme {
 
     // Getters e Setters
 
-    public String getId() {
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
     public String getTitulo() {
         return titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public void setTitulo(String titulo) {

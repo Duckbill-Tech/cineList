@@ -2,28 +2,32 @@ package com.duckbill.cine_list.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class FilmeDTO {
 
-    private String id;
+    private UUID id;
 
     @NotEmpty(message = "Titulo não pode ser vazio.")
     private String titulo;
+
+    private String descricao;
 
     private Double nota;
     private LocalDateTime updatedAt;
     private LocalDateTime completedAt;
     private LocalDateTime deletedAt;
-    private String createdById;
+    private UUID createdById;
 
     // Construtor padrão
     public FilmeDTO() {
     }
 
     // Construtor com todos os parâmetros
-    public FilmeDTO(String id, String titulo, Double nota, LocalDateTime updatedAt, LocalDateTime completedAt, LocalDateTime deletedAt, String createdById) {
+    public FilmeDTO(UUID id, String titulo, String descricao, Double nota, LocalDateTime updatedAt, LocalDateTime completedAt, LocalDateTime deletedAt, UUID createdById) {
         this.id = id;
         this.titulo = titulo;
+        this.descricao = descricao;
         this.nota = nota;
         this.updatedAt = updatedAt;
         this.completedAt = completedAt;
@@ -33,16 +37,24 @@ public class FilmeDTO {
 
     // Getters e Setters
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
     public String getTitulo() {
         return titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public void setTitulo(String titulo) {
@@ -81,11 +93,11 @@ public class FilmeDTO {
         this.deletedAt = deletedAt;
     }
 
-    public String getCreatedById() {
+    public UUID getCreatedById() {
         return createdById;
     }
 
-    public void setCreatedById(String createdById) {
+    public void setCreatedById(UUID createdById) {
         this.createdById = createdById;
     }
 }

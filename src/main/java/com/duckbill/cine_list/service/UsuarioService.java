@@ -23,7 +23,7 @@ public class UsuarioService {
     // Metodo para criar um novo usuário com data de criação
     public UsuarioDTO create(UsuarioDTO usuarioDTO) {
         Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
-        usuario.setId(UUID.randomUUID().toString());
+        usuario.setId(UUID.randomUUID()); // Gera o UUID diretamente sem converter para String
 
         if (!isValidCPF(usuario.getCpf())) {
             throw new IllegalArgumentException("CPF inválido");
@@ -48,8 +48,8 @@ public class UsuarioService {
     }
 
     // Metodo para atualizar um usuário existente
-    public UsuarioDTO update(String id, UsuarioDTO usuarioDTO) {
-        return usuarioRepository.findById(UUID.fromString(id))
+    public UsuarioDTO update(UUID id, UsuarioDTO usuarioDTO) {
+        return usuarioRepository.findById(id)
                 .map(usuario -> {
                     usuario.setNome(usuarioDTO.getNome());
                     usuario.setEmail(usuarioDTO.getEmail());
@@ -98,4 +98,5 @@ public class UsuarioService {
         int resto = 11 - (soma % 11);
         return (resto > 9) ? 0 : resto;
     }
+
 }

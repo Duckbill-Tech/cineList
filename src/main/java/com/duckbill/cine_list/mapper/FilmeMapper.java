@@ -12,6 +12,7 @@ public class FilmeMapper {
         return new FilmeDTO(
                 filme.getId(),
                 filme.getTitulo(),
+                filme.getDescricao(), // Novo campo descricao
                 filme.getNota(),
                 filme.getUpdatedAt(),
                 filme.getCompletedAt(),
@@ -24,6 +25,7 @@ public class FilmeMapper {
         Filme filme = new Filme();
         filme.setId(filmeDTO.getId());
         filme.setTitulo(filmeDTO.getTitulo());
+        filme.setDescricao(filmeDTO.getDescricao()); // Novo campo descricao
         filme.setNota(filmeDTO.getNota());
         filme.setUpdatedAt(filmeDTO.getUpdatedAt());
         filme.setCompletedAt(filmeDTO.getCompletedAt());

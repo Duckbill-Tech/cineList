@@ -31,10 +31,11 @@ public class FilmeServiceTest {
     private FilmeRepository filmeRepository;
 
     @Mock
-    private FilmeMapper filmeMapper;  // Mock do FilmeMapper
+    private FilmeMapper filmeMapper;
 
     @InjectMocks
     private FilmeService filmeService;
+
     private Filme filme;
     private FilmeDTO filmeDTO;
 
@@ -43,15 +44,19 @@ public class FilmeServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
+        UUID filmeId = UUID.randomUUID();
+
         filme = new Filme();
-        filme.setId(UUID.randomUUID().toString());
+        filme.setId(filmeId);
         filme.setTitulo("Test Filme");
+        filme.setDescricao("Descrição do Filme");
         filme.setNota(5.0);
         filme.setUpdatedAt(LocalDateTime.now());
 
         filmeDTO = new FilmeDTO(
                 filme.getId(),
                 filme.getTitulo(),
+                filme.getDescricao(),
                 filme.getNota(),
                 filme.getUpdatedAt(),
                 filme.getCompletedAt(),
@@ -59,7 +64,6 @@ public class FilmeServiceTest {
                 null
         );
 
-        // Configura o comportamento esperado para o mock de filmeMapper
         when(filmeMapper.toDto(filme)).thenReturn(filmeDTO);
         when(filmeMapper.toEntity(any(FilmeDTO.class), any())).thenReturn(filme);
     }
@@ -85,7 +89,7 @@ public class FilmeServiceTest {
     do filme está correto).*/
     @Test
     void testGetByIdWithValidIdAndNotDeleted() {
-        UUID id = UUID.fromString(filme.getId());
+        UUID id = filme.getId();
         when(filmeRepository.findById(id)).thenReturn(Optional.of(filme));
 
         Optional<FilmeDTO> result = filmeService.getById(id);
@@ -93,24 +97,25 @@ public class FilmeServiceTest {
         assertEquals(filmeDTO.getTitulo(), result.get().getTitulo());
     }
 
-
     /* Verifica que um filme deletado não é retornado.*/
     @Test
     void testGetByIdWithDeletedFilme() {
         filme.setDeletedAt(LocalDateTime.now());
-        UUID id = UUID.fromString(filme.getId());
+        UUID id = filme.getId();
         when(filmeRepository.findById(id)).thenReturn(Optional.of(filme));
 
         Optional<FilmeDTO> result = filmeService.getById(id);
         assertFalse(result.isPresent());
     }
 
+
     /* Todos os filmes retornados não estão deletados.*/
     @Test
     void testGetAll() {
         Filme filme2 = new Filme();
-        filme2.setId(UUID.randomUUID().toString());
+        filme2.setId(UUID.randomUUID());
         filme2.setTitulo("Another Test Filme");
+        filme2.setDescricao("Outra descrição");
         filme2.setNota(8.0);
 
         when(filmeRepository.findAll()).thenReturn(List.of(filme, filme2));
@@ -118,6 +123,7 @@ public class FilmeServiceTest {
         when(filmeMapper.toDto(filme2)).thenReturn(new FilmeDTO(
                 filme2.getId(),
                 filme2.getTitulo(),
+                filme2.getDescricao(),
                 filme2.getNota(),
                 filme2.getUpdatedAt(),
                 filme2.getCompletedAt(),
@@ -134,51 +140,50 @@ public class FilmeServiceTest {
     filme e save retorne o mesmo objeto após atualização.*/
     @Test
     void testUpdate() {
-        // Criação de um UUID específico para o teste
         UUID id = UUID.randomUUID();
 
-        // Configuração do filme existente que será retornado pelo mock
         Filme existingFilme = new Filme();
-        existingFilme.setId(id.toString());
+        existingFilme.setId(id);
         existingFilme.setTitulo("Test Filme");
+        existingFilme.setDescricao("Descrição antiga");
         existingFilme.setNota(5.0);
         existingFilme.setUpdatedAt(LocalDateTime.now());
 
         FilmeDTO updatedDetailsDTO = new FilmeDTO();
-        updatedDetailsDTO.setId(id.toString());
+        updatedDetailsDTO.setId(id);
         updatedDetailsDTO.setTitulo("Updated Title");
+        updatedDetailsDTO.setDescricao("Nova descrição");
         updatedDetailsDTO.setNota(9.0);
 
         when(filmeRepository.findById(id)).thenReturn(Optional.of(existingFilme));
 
-        // Configuração do mock para save, retornando o objeto atualizado com o novo título, nota e updatedAt
         when(filmeRepository.save(any(Filme.class))).thenAnswer(invocation -> {
             Filme filmeToSave = invocation.getArgument(0);
             filmeToSave.setTitulo(updatedDetailsDTO.getTitulo());
+            filmeToSave.setDescricao(updatedDetailsDTO.getDescricao());
             filmeToSave.setNota(updatedDetailsDTO.getNota());
-            filmeToSave.setUpdatedAt(LocalDateTime.now()); // Atualiza o campo updatedAt
+            filmeToSave.setUpdatedAt(LocalDateTime.now());
             return filmeToSave;
         });
 
-        // Configura o filmeMapper para aceitar qualquer instância de Filme e retornar o DTO com updatedAt
         when(filmeMapper.toDto(any(Filme.class))).thenAnswer(invocation -> {
             Filme filme = invocation.getArgument(0);
             return new FilmeDTO(
                     filme.getId(),
                     filme.getTitulo(),
+                    filme.getDescricao(),
                     filme.getNota(),
-                    filme.getUpdatedAt(), // Certifique-se de que o updatedAt é passado para o DTO
+                    filme.getUpdatedAt(),
                     filme.getCompletedAt(),
                     filme.getDeletedAt(),
                     null
             );
         });
 
-        // Execução do método de atualização usando o UUID diretamente
         FilmeDTO updatedFilmeDTO = filmeService.update(id, updatedDetailsDTO);
 
-        // Verificação se o título, nota e updatedAt foram atualizados corretamente
         assertEquals("Updated Title", updatedFilmeDTO.getTitulo());
+        assertEquals("Nova descrição", updatedFilmeDTO.getDescricao());
         assertEquals(9.0, updatedFilmeDTO.getNota());
         assertNotNull(updatedFilmeDTO.getUpdatedAt(), "updatedAt deveria ter um valor");
     }
@@ -196,7 +201,7 @@ public class FilmeServiceTest {
     /* Testa delete, configurando o mock para que findById retorne o filme.*/
     @Test
     void testDelete() {
-        UUID id = UUID.fromString(filme.getId());
+        UUID id = filme.getId();
         when(filmeRepository.findById(id)).thenReturn(Optional.of(filme));
 
         filmeService.delete(id);
@@ -208,7 +213,7 @@ public class FilmeServiceTest {
     @Test
     void testDeleteAlreadyDeleted() {
         filme.setDeletedAt(LocalDateTime.now());
-        UUID id = UUID.fromString(filme.getId());
+        UUID id = filme.getId();
         when(filmeRepository.findById(id)).thenReturn(Optional.of(filme));
 
         filmeService.delete(id);

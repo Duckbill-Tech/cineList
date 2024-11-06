@@ -5,13 +5,15 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "usuario") // Define a tabela "usuario" no banco de dados
 public class Usuario {
 
     @Id
-    private String id;
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
 
     @Column(nullable = false, unique = true) // Define o e-mail como obrigatório e único
     private String email;
@@ -40,12 +42,11 @@ public class Usuario {
     private LocalDateTime deletedAt;
 
     // Getters e Setters
-
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

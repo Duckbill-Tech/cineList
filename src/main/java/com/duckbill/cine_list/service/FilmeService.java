@@ -32,14 +32,14 @@ public class FilmeService {
         Usuario createdBy = null;
 
         if (filmeDTO.getCreatedById() != null) {
-            createdBy = usuarioRepository.findById(UUID.fromString(filmeDTO.getCreatedById()))
+            createdBy = usuarioRepository.findById(filmeDTO.getCreatedById())
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         }
 
         Filme filme = filmeMapper.toEntity(filmeDTO, createdBy);
 
         if (filme.getId() == null) {
-            filme.setId(UUID.randomUUID().toString());
+            filme.setId(UUID.randomUUID());
         }
 
         Filme savedFilme = filmeRepository.save(filme);
@@ -69,6 +69,7 @@ public class FilmeService {
         return filmeRepository.findById(id)
                 .map(filme -> {
                     filme.setTitulo(filmeDTO.getTitulo());
+                    filme.setDescricao(filmeDTO.getDescricao()); // Atualiza a descrição
                     filme.setNota(filmeDTO.getNota());
                     filme.setUpdatedAt(LocalDateTime.now());
                     Filme updatedFilme = filmeRepository.save(filme);
