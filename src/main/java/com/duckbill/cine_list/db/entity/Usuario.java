@@ -12,7 +12,7 @@ import java.util.UUID;
 public class Usuario {
 
     @Id
-    @Column(columnDefinition = "BINARY(16)")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false, unique = true) // Define o e-mail como obrigatório e único

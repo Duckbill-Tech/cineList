@@ -9,8 +9,7 @@ import java.util.UUID;
 public class Filme {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)

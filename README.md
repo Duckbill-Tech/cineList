@@ -34,13 +34,15 @@ Usando o -q para silenciar warnings:
 mvn -q  flyway:migrate -Dflyway.url=jdbc:mysql://localhost:3306/cinelist -Dflyway.user=cinelist -Dflyway.password=cinelist -Dflyway.locations=classpath:/db/migration
 ```
 
-
-
-
+# Testes
 
 Comando para rodar teste:
-
-
 ```
 mvn test        
+```
+
+# Servidor HTTP (rodar a aplicação)
+
+```
+mvn spring-boot:run
 ```
