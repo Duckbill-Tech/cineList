@@ -48,8 +48,8 @@ public class UsuarioService {
     }
 
     // Metodo para atualizar um usuário existente
-    public UsuarioDTO update(UUID id, UsuarioDTO usuarioDTO) {
-        return usuarioRepository.findById(id)
+    public UsuarioDTO update(String id, UsuarioDTO usuarioDTO) {
+        return usuarioRepository.findById(UUID.fromString(id))
                 .map(usuario -> {
                     usuario.setNome(usuarioDTO.getNome());
                     usuario.setEmail(usuarioDTO.getEmail());

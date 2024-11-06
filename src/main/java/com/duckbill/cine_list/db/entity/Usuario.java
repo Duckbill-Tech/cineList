@@ -1,6 +1,8 @@
 package com.duckbill.cine_list.db.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,11 +28,13 @@ public class Usuario {
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Filme> filmesCriados;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    @Column(name = "updatedAt", nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime updatedAt;
 
     @Column
     private LocalDateTime deletedAt;

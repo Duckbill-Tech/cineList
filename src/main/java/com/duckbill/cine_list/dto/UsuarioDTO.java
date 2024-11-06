@@ -18,6 +18,9 @@ public class UsuarioDTO {
     @NotEmpty(message = "CPF não pode ser vazio.")
     private String cpf;
 
+    @NotEmpty(message = "Senha não pode ser vazia.")
+    private String senha; // Adicionado campo senha
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
@@ -26,11 +29,12 @@ public class UsuarioDTO {
     public UsuarioDTO() {
     }
 
-    public UsuarioDTO(String id, String nome, String email, String cpf, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+    public UsuarioDTO(String id, String nome, String email, String cpf, String senha, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.cpf = cpf;
+        this.senha = senha;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -66,6 +70,14 @@ public class UsuarioDTO {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getSenha() {  // Adiciona getter de senha
+        return senha;
+    }
+
+    public void setSenha(String senha) {  // Adiciona setter de senha
+        this.senha = senha;
     }
 
     public LocalDateTime getCreatedAt() {

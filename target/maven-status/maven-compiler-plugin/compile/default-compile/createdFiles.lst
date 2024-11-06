@@ -1,3 +1,4 @@
+com/duckbill/cine_list/controller/UsuarioController.class
 com/duckbill/cine_list/service/UsuarioService.class
 com/duckbill/cine_list/db/entity/Filme.class
 com/duckbill/cine_list/dto/FilmeDTO.class
