@@ -18,20 +18,12 @@ docker run -d \
     mysql:latest
 ```
 
-## Migrations 
+## Migrations usando JPA
 
 ```
 mvn clean
 mvn compile
-```
-
-Rodar as migrations gerando tabelas (com o warning de versão):
-```
-mvn flyway:migrate -Dflyway.url=jdbc:mysql://localhost:3306/cinelist -Dflyway.user=cinelist -Dflyway.password=cinelist -Dflyway.locations=classpath:/db/migration
-```
-Usando o -q para silenciar warnings:
-```
-mvn -q  flyway:migrate -Dflyway.url=jdbc:mysql://localhost:3306/cinelist -Dflyway.user=cinelist -Dflyway.password=cinelist -Dflyway.locations=classpath:/db/migration
+mvn spring-boot:run
 ```
 
 # Testes
