@@ -1,9 +1,9 @@
 # moviesList
 A3 - Sitemas distriuídos e Mobile
 
-Full stack aplicação para gerenciar listas de filmes.
+Aplicação Full stack para gerenciar listas de filmes.
 
-Command line for MySQL service via docker:
+Comando para inicializar o MySQL service via docker:
 
 ```sh
 docker run -d \
@@ -16,4 +16,25 @@ docker run -d \
     -v cineList_data:/var/lib/mysql \
     -p 3306:3306 \
     mysql:latest
+```
+
+## Migrations usando JPA
+
+```
+mvn clean
+mvn compile
+mvn spring-boot:run
+```
+
+# Testes
+
+Comando para rodar teste:
+```
+mvn test        
+```
+
+# Servidor HTTP (rodar a aplicação)
+
+```
+mvn spring-boot:run
 ```
