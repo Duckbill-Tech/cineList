@@ -1,6 +1,8 @@
 package com.duckbill.cine_list.db.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,12 +20,12 @@ public class Filme {
     @Column(length = 255)
     private String descricao;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_filme_usuario"))
-    private Usuario createdBy;
+    @Column
+    private Double nota;
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    @Column(name = "updatedAt", nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime updatedAt;
 
     @Column
     private LocalDateTime completedAt;
@@ -31,8 +33,10 @@ public class Filme {
     @Column
     private LocalDateTime deletedAt;
 
-    @Column
-    private Double nota;
+    @ManyToOne
+    @JoinColumn(name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_filme_usuario"))
+    private Usuario createdBy;
+
 
     // Getters e Setters
 

@@ -28,23 +28,22 @@ public class FilmeService {
     private FilmeMapper filmeMapper;
 
     // Metodo para criar um novo filme com data de criação e atualização
-    public FilmeDTO create(FilmeDTO filmeDTO) {
-        Usuario createdBy = null;
+    public FilmeDTO create(FilmeDTO filmeDTO, UUID usuarioId) {
+        // Busca o usuário no banco pelo ID
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        if (filmeDTO.getCreatedById() != null) {
-            createdBy = usuarioRepository.findById(filmeDTO.getCreatedById())
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        }
-
-        Filme filme = filmeMapper.toEntity(filmeDTO, createdBy);
-
-        if (filme.getId() == null) {
-            filme.setId(UUID.randomUUID());
-        }
+        // Cria uma nova entidade Filme
+        Filme filme = new Filme();
+        filme.setTitulo(filmeDTO.getTitulo());
+        filme.setDescricao(filmeDTO.getDescricao());
+        filme.setNota(filmeDTO.getNota());
+        filme.setCreatedBy(usuario);  // Define o usuário como `createdBy`
 
         Filme savedFilme = filmeRepository.save(filme);
-        return filmeMapper.toDto(savedFilme);
+        return FilmeMapper.toDto(savedFilme);
     }
+
 
     /* Metodo para buscar um filme pelo ID, garantindo que não esteja deletado
      Quando um filme é marcado como deletado (com deletedAt preenchido), a intenção é que ele
