@@ -2,7 +2,6 @@ package com.duckbill.cine_list.infra.security;
 
 import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.UsuarioRepository;
-import com.duckbill.cine_list.infra.security.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,37 +26,30 @@ public class SecurityFilter extends OncePerRequestFilter {
     private UsuarioRepository usuarioRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // Recupera o token da requisição
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         String token = this.recoverToken(request);
+        String email = (token != null) ? tokenService.validateToken(token) : null;
 
-        // Valida o token e obtém o email do usuário
-        String email = tokenService.validateToken(token);
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            usuarioRepository.findByEmail(email).ifPresent(usuario -> {
+                var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                var authentication = new UsernamePasswordAuthenticationToken(usuario, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        if (email != null) {
-            // Busca o usuário pelo email -> caso não encontrar o usuário:
-            Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-            // Cria uma lista com a autoridade padrão
-            var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-
-            // Cria o token de autenticação para o Spring Security contendo as roles
-            var authentication = new UsernamePasswordAuthenticationToken(usuario, null, authorities);
-
-            // Define o contexto de autenticação para o usuário
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                // Adicione um print para verificar o contexto de autenticação
+                System.out.println("Autenticação configurada: " + SecurityContextHolder.getContext().getAuthentication());
+            });
         }
 
-        // Continua a cadeia de filtros
         filterChain.doFilter(request, response);
     }
 
     // Metodo para extrair o token JWT do cabeçalho Authorization
     private String recoverToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return null;
-        }
-        return authHeader.replace("Bearer ", "");
+        return (authHeader != null && authHeader.startsWith("Bearer "))
+                ? authHeader.substring(7)
+                : null;
     }
 }

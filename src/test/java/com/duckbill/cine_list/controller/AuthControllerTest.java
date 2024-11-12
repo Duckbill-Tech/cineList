@@ -51,7 +51,7 @@ class AuthControllerTest {
         usuario.setNome("Test Usuario");
 
         loginRequest = new LoginRequestDTO("test@usuario.com", "password");
-        registerRequest = new RegisterRequestDTO("test@usuario.com", "password", "Test Usuario");
+        registerRequest = new RegisterRequestDTO("Nome do Usuário", "email@example.com", "39470950828", "senha123");
     }
 
     // Teste para login com sucesso

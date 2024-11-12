@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -33,6 +32,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll() // Permite o acesso ao endpoint de login sem autenticação
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll() // Permite o acesso ao endpoint de registro sem autenticação
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/user").hasAnyAuthority("ROLE_USER") // Permite acesso ao endpoint /user para usuários autenticados
                         .anyRequest().authenticated() // Requer autenticação para todas as outras requisições
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class); // Adiciona o filtro de segurança antes do filtro padrão de autenticação

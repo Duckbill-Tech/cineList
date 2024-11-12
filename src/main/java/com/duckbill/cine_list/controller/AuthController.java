@@ -44,13 +44,21 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO body) {
-        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(body.email());
+        // Verifique se a senha e o CPF estão presentes
+        if (body.senha() == null || body.senha().isEmpty()) {
+            return ResponseEntity.badRequest().body("Senha não pode ser vazia.");
+        }
+        if (body.cpf() == null || body.cpf().isEmpty()) {
+            return ResponseEntity.badRequest().body("CPF não pode ser vazio.");
+        }
 
+        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(body.email());
         if (usuarioExistente.isEmpty()) {
             Usuario novoUsuario = new Usuario();
             novoUsuario.setSenha(passwordEncoder.encode(body.senha()));
             novoUsuario.setEmail(body.email());
             novoUsuario.setNome(body.nome());
+            novoUsuario.setCpf(body.cpf());  // Verifique se o CPF está sendo definido aqui
             usuarioRepository.save(novoUsuario);
 
             String token = tokenService.generateToken(novoUsuario);
