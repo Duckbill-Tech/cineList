@@ -1,4 +1,4 @@
 package com.duckbill.cine_list.dto;
 
-public record RegisterRequestDTO (String name, String email, String password) {
+public record RegisterRequestDTO (String nome, String email, String senha) {
 }

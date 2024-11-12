@@ -30,14 +30,15 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO body) {
-        Usuario usuario = usuarioRepository.findByEmail(body.email())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        // Caso a senha der match
-        if (passwordEncoder.matches(body.password(), usuario.getSenha())) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(body.email());
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        Usuario usuario = usuarioOpt.get();
+        if (passwordEncoder.matches(body.senha(), usuario.getSenha())) {
             String token = tokenService.generateToken(usuario);
             return ResponseEntity.ok(new ResponseDTO(usuario.getNome(), token));
         }
-
         return ResponseEntity.badRequest().build();
     }
 
@@ -47,9 +48,9 @@ public class AuthController {
 
         if (usuarioExistente.isEmpty()) {
             Usuario novoUsuario = new Usuario();
-            novoUsuario.setSenha(passwordEncoder.encode(body.password()));
+            novoUsuario.setSenha(passwordEncoder.encode(body.senha()));
             novoUsuario.setEmail(body.email());
-            novoUsuario.setNome(body.name());
+            novoUsuario.setNome(body.nome());
             usuarioRepository.save(novoUsuario);
 
             String token = tokenService.generateToken(novoUsuario);

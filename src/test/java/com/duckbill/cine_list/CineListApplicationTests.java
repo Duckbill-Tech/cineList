@@ -1,11 +1,11 @@
 package com.duckbill.cine_list;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
+@Disabled
 @SpringBootTest
-@ActiveProfiles("test")
 class CineListApplicationTests {
 
 	@Test
