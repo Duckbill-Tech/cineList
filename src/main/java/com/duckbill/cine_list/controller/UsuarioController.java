@@ -77,4 +77,10 @@ public class UsuarioController {
         usuarioService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    // Endpoint adicional para retornar uma mensagem de sucesso
+    @GetMapping("/user")
+    public ResponseEntity<String> getUser() {
+        return ResponseEntity.ok("sucesso!");
+    }
 }
