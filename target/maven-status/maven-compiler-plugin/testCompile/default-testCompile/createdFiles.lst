@@ -1,3 +1,6 @@
 com/duckbill/cine_list/service/FilmeServiceTest.class
-com/duckbill/cine_list/CineListApplicationTests.class
+com/duckbill/cine_list/controller/UsuarioControllerTest.class
+com/duckbill/cine_list/controller/AuthControllerTest.class
 com/duckbill/cine_list/service/UsuarioServiceTest.class
+com/duckbill/cine_list/controller/FilmeControllerTest.class
+com/duckbill/cine_list/CineListApplicationTests.class

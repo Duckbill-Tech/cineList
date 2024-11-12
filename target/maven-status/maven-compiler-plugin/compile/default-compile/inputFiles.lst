@@ -1,4 +1,5 @@
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/CineListApplication.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/controller/AuthController.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/controller/FilmeController.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/controller/UsuarioController.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/db/entity/Filme.java
@@ -6,7 +7,15 @@
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/db/repository/FilmeRepository.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/db/repository/UsuarioRepository.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/FilmeDTO.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/LoginRequestDTO.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/RegisterRequestDTO.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/ResponseDTO.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/UsuarioDTO.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/infra/security/CustomUserDetailsService.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/infra/security/SecurityConfig.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/infra/security/SecurityFilter.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/infra/security/TokenService.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/infra/security/cors/CorsConfig.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/mapper/FilmeMapper.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/mapper/UsuarioMapper.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/service/FilmeService.java

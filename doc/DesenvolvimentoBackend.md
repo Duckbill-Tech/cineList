@@ -111,3 +111,17 @@ Usamos isso?
 https://swagger.io/resources/open-api/
 
 
+## Implementação Login 
+
+https://metal-flea-041.notion.site/Backend-Projeto-Fullstack-App-de-Login-58cb6fbf5dce4dfcb541fd7b7e7e157b
+https://www.youtube.com/watch?v=tJCyNV1G0P4
+
+Sim, o passo a passo descrito no link faz sentido para implementar um sistema de autenticação com JWT usando Spring Boot. Ele aborda todos os componentes principais para um login seguro e sem estado (stateless), ideal para APIs RESTful:
+1.	Configuração do Banco de Dados e Dependências: Define as dependências necessárias para H2 (banco de dados em memória) e JWT.
+2.	Entidade e Repositório de Usuário: Cria as classes essenciais para representar e armazenar usuários.
+3.	TokenService: Gerencia a geração e validação dos tokens JWT, essenciais para autenticação.
+4.	SecurityFilter: Um filtro personalizado que verifica o JWT e autentica o usuário.
+5.	CustomUserDetailsService e SecurityConfig: Configurações de segurança para autenticação e autorização usando Spring Security.
+6.	AuthController: Um controlador de autenticação que lida com os endpoints de login e registro.
+
+Essa estrutura permite que você implemente uma autenticação JWT de forma segura, isolando a lógica de segurança e protegendo seus endpoints.

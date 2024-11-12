@@ -5,6 +5,7 @@ import com.duckbill.cine_list.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -76,5 +77,12 @@ public class UsuarioController {
     public ResponseEntity<Void> deleteUsuario(@PathVariable UUID id) {
         usuarioService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Endpoint adicional para retornar uma mensagem de sucesso
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @GetMapping("/user")
+    public ResponseEntity<String> getUser() {
+        return ResponseEntity.ok("sucesso!");
     }
 }
