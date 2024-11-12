@@ -59,8 +59,6 @@ Usa filmeRepository.findAll() para buscar todos os filmes.
 Retorna uma List<Filme> contendo todos os registros da tabela filme.
 
 
-
-
 ### SEGURANÇA
 
 
@@ -91,3 +89,25 @@ UUIDs são independentes de um banco de dados específico, permitindo migraçõe
 Usar um arquivo .env para armazenar variáveis de ambiente em uma aplicação traz várias vantagens, especialmente para o gerenciamento de configurações em diferentes ambientes (desenvolvimento, teste, produção).
 
 Informações sensíveis, como credenciais de bancos de dados, chaves de API e tokens de autenticação, podem ser armazenadas em um arquivo .env, mantendo-as fora do código. Isso reduz o risco de que informações confidenciais sejam expostas em repositórios de código, especialmente se o .env estiver incluído no .gitignore.
+
+
+
+## Testes
+
+Fazemos testes que simulam erros para garantir que a aplicação lide adequadamente com situações inesperadas e com entradas de dados incorretas. Esses testes, conhecidos como testes de erro ou testes de cenários negativos, têm várias finalidades importantes:
+1.	Verificar Tratamento de Exceções: Testes de erro ajudam a confirmar que o código captura exceções corretamente e responde com a mensagem de erro ou status HTTP apropriado, sem deixar a aplicação falhar de forma descontrolada.
+2.	Garantir Experiência do Usuário Consistente: Em situações de erro, queremos que a aplicação retorne mensagens informativas, como “Usuário não encontrado” ou “Erro de validação”, para que o usuário ou cliente do serviço entenda o que deu errado e, se possível, possa corrigir.
+3.	Prevenir Falhas em Produção: Simulando esses cenários, conseguimos antecipar problemas antes que a aplicação esteja em produção, evitando que falhas conhecidas cheguem aos usuários finais.
+4.	Cobrir Casos de Uso Extremos e Inputs Inválidos: Esses testes ajudam a validar como a aplicação se comporta com dados inesperados (como IDs inválidos ou campos obrigatórios ausentes), e se ela está pronta para lidar com esses casos sem comprometer a estabilidade.
+5.	Aumentar a Confiabilidade do Código: Ao garantir que cada cenário de erro é tratado, temos confiança de que a aplicação é resiliente e capaz de lidar com uma variedade de inputs e condições, tornando o sistema mais robusto e confiável.
+
+Esses testes de erro são fundamentais para sistemas seguros e confiáveis, especialmente em APIs e serviços que devem lidar com diversas interações e dados variados.
+
+
+## Documentação da API
+
+
+Usamos isso?
+https://swagger.io/resources/open-api/
+
+
