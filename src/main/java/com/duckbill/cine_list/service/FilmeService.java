@@ -41,7 +41,7 @@ public class FilmeService {
         filme.setCreatedBy(usuario);  // Define o usuário como `createdBy`
 
         Filme savedFilme = filmeRepository.save(filme);
-        return FilmeMapper.toDto(savedFilme);
+        return filmeMapper.toDto(savedFilme);
     }
 
 

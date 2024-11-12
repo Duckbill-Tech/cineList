@@ -1,7 +1,9 @@
 package com.duckbill.cine_list.service;
 
 import com.duckbill.cine_list.db.entity.Filme;
+import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.FilmeRepository;
+import com.duckbill.cine_list.db.repository.UsuarioRepository;
 import com.duckbill.cine_list.dto.FilmeDTO;
 import com.duckbill.cine_list.mapper.FilmeMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +34,9 @@ public class FilmeServiceTest {
 
     @Mock
     private FilmeMapper filmeMapper;
+
+    @Mock
+    private UsuarioRepository usuarioRepository;
 
     @InjectMocks
     private FilmeService filmeService;
@@ -76,9 +81,15 @@ public class FilmeServiceTest {
         - metodo save foi chamado exatamente uma vez.*/
     @Test
     void testCreate() {
+        UUID usuarioId = UUID.randomUUID();
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
         when(filmeRepository.save(any(Filme.class))).thenReturn(filme);
 
-        FilmeDTO createdFilmeDTO = filmeService.create(filmeDTO);
+        FilmeDTO createdFilmeDTO = filmeService.create(filmeDTO, usuarioId);
+
         assertNotNull(createdFilmeDTO.getId());
         assertEquals(filmeDTO.getTitulo(), createdFilmeDTO.getTitulo());
         verify(filmeRepository, times(1)).save(any(Filme.class));
