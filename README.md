@@ -26,15 +26,21 @@ mvn compile
 mvn spring-boot:run
 ```
 
-# Testes
+## Testes
 
 Comando para rodar teste:
 ```
 mvn test        
 ```
 
-# Servidor HTTP (rodar a aplicação)
+## Servidor HTTP (rodar a aplicação)
 
 ```
 mvn spring-boot:run
 ```
+
+# Documentação API - Swagger
+
+Disponível em:
+	•	Swagger UI: http://localhost:8081/swagger-ui/index.html
+	•	Documentação JSON: http://localhost:8081/v3/api-docshttp://localhost:8081/swagger-ui/index.html
