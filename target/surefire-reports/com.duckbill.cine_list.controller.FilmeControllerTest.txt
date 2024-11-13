@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.duckbill.cine_list.controller.FilmeControllerTest
 -------------------------------------------------------------------------------
-Tests run: 11, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.676 s - in com.duckbill.cine_list.controller.FilmeControllerTest
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.957 s - in com.duckbill.cine_list.controller.FilmeControllerTest
