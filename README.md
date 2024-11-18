@@ -1,5 +1,3 @@
-# CineList - Sistema de Gerenciamento de Filmes
-
 ## Relatório de Aplicação - Sistema de lista de filmes
 
 O CineList é uma aplicação full stack desenvolvida para gerenciar listas de filmes, permitindo que os usuários cadastrem, 
