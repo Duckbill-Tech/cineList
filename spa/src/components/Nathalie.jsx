@@ -4,7 +4,7 @@ import { Github, Linkedin } from "lucide-react";
 function Nathalie() {
   return (
     <nav
-      className="bg-black text-white p-4 rounded-md"
+      className="bg-black text-white text-left p-4 rounded-md"
       role="navigation"
       aria-label="Perfil de Nathalie"
     >

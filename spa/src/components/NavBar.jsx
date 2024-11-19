@@ -10,10 +10,8 @@ function NavBar() {
   const email = searchParams.get("email");
   const menuRef = useRef(null); // Referência para o menu do usuário - TODO: precisamos adicionar aqui uma chamada/rota para o valor do email.
 
-  // Resumi em uma só função para adicionar a rolagem até uma seção específica
   const handleScrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
-    // Verificação se está encontrando mesmo a sessão correta
     if (section) {
       section.scrollIntoView({ behavior: "smooth", block: "start" });
       console.log(`Rolando para a seção: ${sectionId}`);
@@ -26,18 +24,15 @@ function NavBar() {
 
   const logout = () => navigate("/");
 
-  // Fechar menu ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowMenu(false); // Fecha o menu se o clique for fora dele
+        setShowMenu(false);
       }
     };
 
-    // Adiciona o event listener no clique do documento
     document.addEventListener("mousedown", handleClickOutside);
 
-    // Remove o event listener ao desmontar o componente
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -50,7 +45,6 @@ function NavBar() {
       aria-label="Barra de Navegação"
     >
       <div className="flex justify-between items-center max-w-7xl mx-auto">
-        {/* Navegação Principal */}
         <ul className="flex space-x-6 text-white">
           <NavButton
             onClick={() => handleScrollToSection("cinelist")}
@@ -69,11 +63,10 @@ function NavBar() {
           />
         </ul>
 
-        {/* Menu do Usuário TODO*/}
         <div className="flex items-center space-x-2 relative" ref={menuRef}>
           <p
             className="text-white truncate max-w-[150px] overflow-hidden text-ellipsis"
-            title={email || "Usuário"} // Exibe o email completo ao passar o mouse
+            title={email || "Usuário"}
           >
             {email || "Usuário"}
           </p>
