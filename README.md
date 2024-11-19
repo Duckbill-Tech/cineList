@@ -5,7 +5,7 @@ atualizem, visualizem e removam filmes de suas listas. O sistema foi desenvolvid
 Java e Spring Boot no backend e React no frontend, com um banco de dados MySQL. A interface inicial é oferecida através 
 de uma API documentada via Swagger.
 
-## Desenvolvimento 
+## Desenvolvimento (Backend)
 
 O desenvolvimento do CineList foi realizado seguindo os princípios da programação orientada a objetos e de boas práticas 
 para APIs RESTful. O projeto foi estruturado em pacotes distintos para facilitar a organização, manutenção e extensão do código. 
@@ -17,7 +17,7 @@ As principais pastas são:
 - frontend (SPA): contém os componentes e lógica de apresentação da interface de usuário.
 - docker: configurações para iniciar o banco de dados MySQL via Docker.
 
-## Tecnologias e Ferramentas
+## Tecnologias e Ferramentas (Backend)
 
 Foram utilizadas as seguintes tecnologias e ferramentas:
 - MySQL: Banco de dados relacional utilizado para armazenar informações dos filmes.
@@ -84,6 +84,18 @@ docker run -d \
     -p 3306:3306 \
     mysql:latest
 ```
+## Desenvolvimento (Frontend)
+O frontend foi desenvolvido seguindo os princípios de componentização e boas práticas de desenvolvimento de Single Page Applications (SPA). A arquitetura foi projetada para separar responsabilidades, com cada funcionalidade principal encapsulada em componentes reutilizáveis. A comunicação com o backend é realizada via chamadas REST utilizando a biblioteca fetch.
+
+## Tecnologias e Ferramentas (Frontend)
+As tecnologias utilizadas no desenvolvimento do frontend incluem:
+
+React: Biblioteca JavaScript para criação de interfaces de usuário.
+Tailwind CSS: Framework utilitário para estilização rápida e responsiva.
+React Router: Para gerenciar navegação e rotas.
+UUID (v4): Para geração de identificadores únicos para filmes.
+Vite: Ferramenta de build para desenvolvimento rápido e eficiente.
+Lucide-react: Biblioteca de ícones para uso em componentes.
 
 ## Frontend (React)
 
