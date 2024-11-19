@@ -7,6 +7,7 @@ import Movies from "../components/Movies";
 import MoviesSeen from "../components/MoviesSeen";
 import Katerine from "../components/Katerine";
 import Nathalie from "../components/Nathalie";
+import { fetchMovies, addMovie, deleteMovie } from "../apis/apiHome"; // Importando as funções de apiHome.js
 
 function Home() {
   useEffect(() => {
@@ -19,13 +20,15 @@ function Home() {
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
 
-  const [movies, setMovies] = useState([
-    { id: 1, title: "filme 1", inSeen: false },
-    { id: 2, title: "filme 2", inSeen: false },
-    { id: 3, title: "filme 3", inSeen: false },
-  ]);
-
+  const [movies, setMovies] = useState([]); // Estado de filmes agora vem da API
   const [moviesSeen, setMoviesSeen] = useState([]);
+
+  // Carrega filmes da API quando o componente for montado
+  useEffect(() => {
+    fetchMovies()
+      .then((data) => setMovies(data))
+      .catch((error) => console.error("Erro ao carregar filmes:", error));
+  }, []);
 
   const onMovieClick = (movieId) => {
     const updatedMovies = movies.filter((movie) => movie.id !== movieId);
@@ -41,11 +44,19 @@ function Home() {
 
   const onAddMovieSubmit = (title) => {
     const newMovie = { id: v4(), title, inSeen: false };
-    setMovies([...movies, newMovie]);
+    addMovie(newMovie)
+      .then((addedMovie) => {
+        setMovies([...movies, addedMovie]); // Adiciona o novo filme à lista
+      })
+      .catch((error) => console.error("Erro ao adicionar filme:", error));
   };
 
   const onDeleteMovieClick = (movieId) => {
-    setMovies(movies.filter((movie) => movie.id !== movieId));
+    deleteMovie(movieId)
+      .then(() => {
+        setMovies(movies.filter((movie) => movie.id !== movieId)); // Remove o filme localmente
+      })
+      .catch((error) => console.error("Erro ao excluir filme:", error));
   };
 
   const onDeleteMovieSeenClick = (movieId) => {
