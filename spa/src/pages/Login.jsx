@@ -14,7 +14,7 @@ function Login({ onLoginSubmit }) {
     event.preventDefault(); // Impede o comportamento padrão do formulário
 
     if (!email.trim() || !senha.trim()) {
-      setErro("Campos obrigatórios");
+      setErro("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
 
