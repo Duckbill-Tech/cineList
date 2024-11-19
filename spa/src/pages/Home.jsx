@@ -7,7 +7,7 @@ import Movies from "../components/Movies";
 import MoviesSeen from "../components/MoviesSeen";
 import Katerine from "../components/Katerine";
 import Nathalie from "../components/Nathalie";
-import { fetchMovies, addMovie, deleteMovie } from "../apis/apiHome"; // Importando as funções de apiHome.js
+import { fetchMovies, addMovie, deleteMovie } from "../apis/apiHome";
 
 function Home() {
   useEffect(() => {

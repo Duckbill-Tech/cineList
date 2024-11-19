@@ -1,29 +1,38 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import { loginUser } from "../api/apiLogin";
 
 function Login({ onLoginSubmit }) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState(null);
   const navigate = useNavigate();
 
   // Função chamada quando o login for realizado
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault(); // Impede o comportamento padrão do formulário
 
     if (!email.trim() || !senha.trim()) {
-      return alert("Campos obrigatórios");
+      setErro("Campos obrigatórios");
+      return;
     }
 
-    // Chama a função onLoginSubmit passando o email
-    onLoginSubmit(email);
+    try {
+      const data = await loginUser(email, senha); // Chamada à função de API
 
-    // Limpa os campos após o login
-    setEmail("");
-    setSenha("");
+      // Chama a função onLoginSubmit passando o email
+      onLoginSubmit(data.email);
 
-    // Navega para a página "home" após o login bem-sucedido
-    navigate(`/home?email=${email}`);
+      // Limpa os campos após o login
+      setEmail("");
+      setSenha("");
+
+      // Navega para a página "home" após o login bem-sucedido
+      navigate(`/home?email=${data.email}`);
+    } catch (error) {
+      setErro(error.message);
+    }
   };
 
   // Função para redirecionar para a página de registro
