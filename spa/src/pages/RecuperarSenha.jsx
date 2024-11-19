@@ -1,29 +1,36 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { recuperarSenha } from "../apis/apiRecuperarSenha";
 
 function RecuperarSenha() {
   const [email, setEmail] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [erro, setErro] = useState(null);
   const navigate = useNavigate();
 
   // Função chamada quando o email de recuperação for enviado
-  const handleRecuperarSenha = (event) => {
+  const handleRecuperarSenha = async (event) => {
     event.preventDefault(); // Impede o comportamento padrão do formulário
 
     if (!email.trim()) {
-      return alert("Campo de email é obrigatório");
+      setErro("Campo de email é obrigatório");
+      return;
     }
 
-    // Simula o processo de recuperação de senha (TODO: substituir por uma chamada de API real)
-    setFeedback(
-      "Instruções de recuperação de senha enviadas para o seu email!"
-    );
+    try {
+      const response = await recuperarSenha(email); //Chama a API
 
-    // Limpa o campo após o envio
-    setEmail("");
-
-    // Redireciona para a página de login após 3 segundos
-    setTimeout(() => navigate("/login"), 3000);
+      setFeedback(
+        response.message ||
+          "Instruções de recuperação de senha enviadas para o seu email!"
+      ); // Simula o processo de recuperação de senha (TODO: substituir por uma chamada de API real)
+      setErro(null);
+      setEmail(""); // Limpa o campo após o envio
+      setTimeout(() => navigate("/login"), 3000); // Redireciona para a página de login após 3 segundos
+    } catch (error) {
+      setErro(error.message);
+      setFeedback("");
+    }
   };
 
   return (
@@ -56,6 +63,12 @@ function RecuperarSenha() {
           {feedback && (
             <div className="text-center text-white mt-4">
               <p>{feedback}</p>
+            </div>
+          )}
+
+          {erro && (
+            <div className="text-center text-red-500 mt-4">
+              <p>{erro}</p>
             </div>
           )}
         </form>
