@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import { loginUser } from "../api/apiLogin";
+import { loginUser } from "../apis/apiLogin";
 
 function Login({ onLoginSubmit }) {
   const [email, setEmail] = useState("");
