@@ -1,33 +1,27 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../apis/apiRegistro";
 
 function Registro() {
   const [CPF, setCPF] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [erro, setErro] = useState(null);
   const navigate = useNavigate();
 
   // Função chamada quando o cadastro for realizado
-  const handleCadastro = async (event) => {
+  const handleCadastro = (event) => {
     event.preventDefault(); // Previne o comportamento padrão do form de recarregar a página
 
     if (!CPF.trim() || !email.trim() || !senha.trim()) {
       setFeedback("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
-    try {
-      await registerUser(CPF, email, senha); // Chama a função de API
-      setFeedback("Cadastro realizado com sucesso!");
-      setCPF("");
-      setEmail("");
-      setSenha("");
-      navigate("/login"); // Redireciona para a página de login após o cadastro
-    } catch (error) {
-      setErro(error.message);
-    }
+
+    setFeedback("Cadastro realizado com sucesso!");
+    setCPF("");
+    setEmail("");
+    setSenha("");
+    navigate("/login"); // Redireciona para a página de login após o cadastro
   };
 
   return (

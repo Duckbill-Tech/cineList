@@ -1,19 +1,28 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 
-function AddMovie({ onAddMovieSubmit }) {
+function AddMovie({ createFilme }) {
   const [title, setTitle] = useState("");
   const [feedback, setFeedback] = useState("");
 
-  const handleAddMovie = () => {
+  const handleAddMovie = async () => {
     if (!title.trim()) {
       setFeedback("Por favor, preencha o título do filme.");
       return;
     }
 
-    onAddMovieSubmit(title);
-    setTitle("");
-    setFeedback("Filme adicionado com sucesso!");
+    try {
+      // Substitua '12345' pelo ID real do usuário ou torne dinâmico
+      const usuarioId = "12345";
+      const filmeDTO = { titulo: title }; // Ajuste conforme o esperado pelo backend
+
+      await createFilme(filmeDTO, usuarioId);
+      setTitle("");
+      setFeedback("Filme adicionado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao adicionar filme:", error);
+      setFeedback("Erro ao adicionar filme. Tente novamente.");
+    }
   };
 
   return (
@@ -53,7 +62,7 @@ function AddMovie({ onAddMovieSubmit }) {
 }
 
 AddMovie.propTypes = {
-  onAddMovieSubmit: PropTypes.func.isRequired,
+  createFilme: PropTypes.func.isRequired,
 };
 
 export default AddMovie;
