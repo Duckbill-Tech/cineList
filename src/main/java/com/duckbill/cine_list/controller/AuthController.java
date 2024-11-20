@@ -1,70 +1,54 @@
 package com.duckbill.cine_list.controller;
 
-import com.duckbill.cine_list.db.entity.Usuario;
-import com.duckbill.cine_list.db.repository.UsuarioRepository;
 import com.duckbill.cine_list.dto.LoginRequestDTO;
 import com.duckbill.cine_list.dto.RegisterRequestDTO;
 import com.duckbill.cine_list.dto.ResponseDTO;
-import com.duckbill.cine_list.infra.security.TokenService;
+import com.duckbill.cine_list.dto.UsuarioDTO;
+import com.duckbill.cine_list.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
 
-    public AuthController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, TokenService tokenService) {
-        this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.tokenService = tokenService;
+    private final UsuarioService usuarioService;
+
+    public AuthController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO body) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(body.email());
-        if (usuarioOpt.isEmpty()) {
-            return ResponseEntity.badRequest().build();
+        try {
+            ResponseDTO response = usuarioService.login(body.email(), body.senha());
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro ao realizar login.");
         }
-        Usuario usuario = usuarioOpt.get();
-        if (passwordEncoder.matches(body.senha(), usuario.getSenha())) {
-            String token = tokenService.generateToken(usuario);
-            return ResponseEntity.ok(new ResponseDTO(usuario.getNome(), token));
-        }
-        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO body) {
-        // Verifique se a senha e o CPF estão presentes
-        if (body.senha() == null || body.senha().isEmpty()) {
-            return ResponseEntity.badRequest().body("Senha não pode ser vazia.");
-        }
-        if (body.cpf() == null || body.cpf().isEmpty()) {
-            return ResponseEntity.badRequest().body("CPF não pode ser vazio.");
-        }
+        try {
+            // Converte RegisterRequestDTO para UsuarioDTO
+            UsuarioDTO usuarioDTO = new UsuarioDTO();
+            usuarioDTO.setNome(body.nome());
+            usuarioDTO.setEmail(body.email());
+            usuarioDTO.setCpf(body.cpf());
+            usuarioDTO.setSenha(body.senha());
 
-        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(body.email());
-        if (usuarioExistente.isEmpty()) {
-            Usuario novoUsuario = new Usuario();
-            novoUsuario.setSenha(passwordEncoder.encode(body.senha()));
-            novoUsuario.setEmail(body.email());
-            novoUsuario.setNome(body.nome());
-            novoUsuario.setCpf(body.cpf());  // Verifique se o CPF está sendo definido aqui
-            usuarioRepository.save(novoUsuario);
-
-            String token = tokenService.generateToken(novoUsuario);
-            return ResponseEntity.ok(new ResponseDTO(novoUsuario.getNome(), token));
+            ResponseDTO response = usuarioService.register(usuarioDTO);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro ao registrar usuário.");
         }
-
-        return ResponseEntity.badRequest().build();
     }
 }

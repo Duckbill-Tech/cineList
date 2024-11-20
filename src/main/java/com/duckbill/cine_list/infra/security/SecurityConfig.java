@@ -40,7 +40,7 @@ public class SecurityConfig {
 
                         // Permissões para UsuarioController
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // Criar usuário
-                        .requestMatchers(HttpMethod.GET, "/api/usuarios").authenticated() // Listar usuários
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios").permitAll() // Listar usuários
                         .requestMatchers(HttpMethod.GET, "/api/usuarios/{id}").authenticated() // Buscar por ID
                         .requestMatchers(HttpMethod.PUT, "/api/usuarios/{id}").authenticated() // Atualizar por ID
                         .requestMatchers(HttpMethod.DELETE, "/api/usuarios/{id}").authenticated() // Deletar logicamente
@@ -48,9 +48,9 @@ public class SecurityConfig {
 
                         // Permissões para FilmeController
                         .requestMatchers(HttpMethod.POST, "/api/filmes").authenticated() // Criar filme
-                        .requestMatchers(HttpMethod.GET, "/api/filmes").authenticated() // Listar filmes
-                        .requestMatchers(HttpMethod.GET, "/api/filmes/{id}").authenticated() // Buscar filme por ID
-                        .requestMatchers(HttpMethod.PUT, "/api/filmes/{id}").authenticated() // Atualizar filme por ID
+                        .requestMatchers(HttpMethod.GET, "/api/filmes").permitAll() // Listar filmes
+                        .requestMatchers(HttpMethod.GET, "/api/filmes/{id}").permitAll() // Buscar filme por ID
+                        .requestMatchers(HttpMethod.PUT, "/api/filmes/{id}").authenticated()// Atualizar filme por ID
                         .requestMatchers(HttpMethod.DELETE, "/api/filmes/{id}").authenticated() // Deletar logicamente
 
                         // Permissões abertas para Swagger e documentação

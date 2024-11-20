@@ -2,7 +2,9 @@ package com.duckbill.cine_list.service;
 
 import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.UsuarioRepository;
+import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
+import com.duckbill.cine_list.infra.security.TokenService;
 import com.duckbill.cine_list.mapper.UsuarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +16,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @Service
 public class UsuarioService {
 
@@ -22,11 +23,54 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Agora injetado corretamente
+    private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private TokenService tokenService;
+
+    // Metodo para registrar um novo usuário e retornar o token
+    public ResponseDTO register(UsuarioDTO usuarioDTO) {
+        // Verifica se o e-mail já existe no banco de dados
+        if (usuarioRepository.findByEmail(usuarioDTO.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("E-mail já está em uso.");
+        }
+
+        // Valida CPF
+        if (!isValidCPF(usuarioDTO.getCpf())) {
+            throw new IllegalArgumentException("CPF inválido.");
+        }
+
+        // Converte o DTO para a entidade e salva no banco
+        Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
+        usuario.setId(UUID.randomUUID());
+        usuario.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
+
+        Usuario savedUsuario = usuarioRepository.save(usuario);
+
+        // Gera o token para o novo usuário
+        String token = tokenService.generateToken(savedUsuario);
+
+        // Retorna o nome e o token no ResponseDTO
+        return new ResponseDTO(savedUsuario.getNome(), token);
+    }
+
+    // Metodo para autenticar um usuário e gerar o token
+    public ResponseDTO login(String email, String senha) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("E-mail ou senha inválidos."));
+
+        if (!passwordEncoder.matches(senha, usuario.getSenha())) {
+            throw new IllegalArgumentException("E-mail ou senha inválidos.");
+        }
+
+        String token = tokenService.generateToken(usuario);
+        return new ResponseDTO(usuario.getNome(), token);
+    }
+
+    // Metodo para criar um novo usuário sem gerar token
     public UsuarioDTO create(UsuarioDTO usuarioDTO) {
         Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
-        usuario.setId(UUID.randomUUID()); // Gera o UUID diretamente
+        usuario.setId(UUID.randomUUID());
 
         // Valida CPF
         if (!isValidCPF(usuario.getCpf())) {
@@ -39,7 +83,6 @@ public class UsuarioService {
         Usuario savedUsuario = usuarioRepository.save(usuario);
         return UsuarioMapper.toDto(savedUsuario);
     }
-
 
     // Metodo para buscar um usuário pelo ID
     public Optional<UsuarioDTO> getById(UUID id) {
@@ -106,5 +149,4 @@ public class UsuarioService {
         int resto = 11 - (soma % 11);
         return (resto > 9) ? 0 : resto;
     }
-
 }
