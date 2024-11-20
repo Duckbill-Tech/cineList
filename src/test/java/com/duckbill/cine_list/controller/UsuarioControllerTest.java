@@ -1,5 +1,6 @@
 package com.duckbill.cine_list.controller;
 
+import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
 import com.duckbill.cine_list.service.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
@@ -125,31 +126,40 @@ public class UsuarioControllerTest {
     @Test
     void testUpdateUsuario() {
         UUID id = usuarioDTO.getId();
-        UsuarioDTO updatedUsuarioDTO = new UsuarioDTO();
-        updatedUsuarioDTO.setId(id);
-        updatedUsuarioDTO.setNome("Updated Usuario");
-        updatedUsuarioDTO.setEmail("updated@usuario.com");
-        updatedUsuarioDTO.setCpf("987.654.321-00");
+        ResponseDTO updatedResponseDTO = new ResponseDTO("Updated Usuario", "new-jwt-token");
 
-        when(usuarioService.update(eq(id), any(UsuarioDTO.class))).thenReturn(updatedUsuarioDTO);
+        // Configura o mock para retornar o ResponseDTO atualizado
+        when(usuarioService.update(eq(id), any(UsuarioDTO.class))).thenReturn(updatedResponseDTO);
 
-        ResponseEntity<UsuarioDTO> response = usuarioController.updateUsuario(id, updatedUsuarioDTO);
+        // Faz a chamada ao controlador
+        ResponseEntity<ResponseDTO> response = usuarioController.updateUsuario(id, usuarioDTO);
 
+        // Verifica o status da resposta
         assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        // Verifica o corpo da resposta
         assertNotNull(response.getBody());
-        assertEquals(updatedUsuarioDTO.getNome(), response.getBody().getNome());
+        assertEquals(updatedResponseDTO.nome(), response.getBody().nome());
+        assertEquals(updatedResponseDTO.token(), response.getBody().token());
+
+        // Garante que o método de serviço foi chamado uma vez com os parâmetros corretos
         verify(usuarioService, times(1)).update(eq(id), any(UsuarioDTO.class));
     }
 
-    // Testa a atualização de um usuário com ID não encontrado
     @Test
     void testUpdateUsuarioNotFound() {
         UUID id = usuarioDTO.getId();
+
+        // Configura o mock para lançar uma exceção quando o usuário não for encontrado
         when(usuarioService.update(eq(id), any(UsuarioDTO.class))).thenThrow(new RuntimeException("Usuário não encontrado"));
 
-        ResponseEntity<UsuarioDTO> response = usuarioController.updateUsuario(id, usuarioDTO);
+        // Faz a chamada ao controlador
+        ResponseEntity<ResponseDTO> response = usuarioController.updateUsuario(id, usuarioDTO);
 
+        // Verifica o status da resposta
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        // Garante que o método de serviço foi chamado uma vez com os parâmetros corretos
         verify(usuarioService, times(1)).update(eq(id), any(UsuarioDTO.class));
     }
 

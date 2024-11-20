@@ -99,9 +99,10 @@ public class UsuarioService {
     }
 
     // Metodo para atualizar um usuário existente
-    public UsuarioDTO update(UUID id, UsuarioDTO usuarioDTO) {
+    public ResponseDTO update(UUID id, UsuarioDTO usuarioDTO) {
         return usuarioRepository.findById(id)
                 .map(usuario -> {
+                    // Atualiza os dados do usuário
                     usuario.setNome(usuarioDTO.getNome());
                     usuario.setEmail(usuarioDTO.getEmail());
                     usuario.setCpf(usuarioDTO.getCpf());
@@ -112,7 +113,12 @@ public class UsuarioService {
 
                     usuario.setUpdatedAt(LocalDateTime.now());
                     Usuario updatedUsuario = usuarioRepository.save(usuario);
-                    return UsuarioMapper.toDto(updatedUsuario);
+
+                    // Gera um novo token para o usuário atualizado
+                    String newToken = tokenService.generateToken(updatedUsuario);
+
+                    // Retorna o nome do usuário e o novo token
+                    return new ResponseDTO(updatedUsuario.getNome(), newToken);
                 })
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }

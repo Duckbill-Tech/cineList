@@ -1,5 +1,6 @@
 package com.duckbill.cine_list.controller;
 
+import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
 import com.duckbill.cine_list.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,25 +54,29 @@ public class UsuarioController {
 
     // Endpoint para atualizar um usuário por ID
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> updateUsuario(@PathVariable UUID id, @RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<ResponseDTO> updateUsuario(@PathVariable UUID id, @RequestBody UsuarioDTO usuarioDTO) {
         System.err.println("Iniciando atualização de usuário com ID: " + id);  // Loga o ID recebido
 
         // Loga os detalhes do payload recebido
         System.err.println("Payload recebido para atualização: Nome = " + usuarioDTO.getNome() + ", Email = " + usuarioDTO.getEmail() + ", CPF = " + usuarioDTO.getCpf());
 
         try {
-            UsuarioDTO updatedUsuario = usuarioService.update(id, usuarioDTO);
+            // Atualiza o usuário e gera um novo token
+            ResponseDTO response = usuarioService.update(id, usuarioDTO);
 
-            // Loga o usuário atualizado retornado pelo serviço
-            System.err.println("Usuário atualizado com sucesso: Nome = " + updatedUsuario.getNome() + ", Email = " + updatedUsuario.getEmail() + ", CPF = " + updatedUsuario.getCpf());
+            // Loga os detalhes do usuário atualizado e o novo token
+            System.err.println("Usuário atualizado com sucesso: Nome = " + response.nome() + ", Novo Token = " + response.token());
 
-            return ResponseEntity.ok(updatedUsuario);
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             System.err.println("Erro ao atualizar usuário: " + e.getMessage());  // Loga a exceção caso ocorra
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao atualizar usuário: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
         }
     }
-
     // Endpoint para excluir logicamente um usuário por ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUsuario(@PathVariable UUID id) {
