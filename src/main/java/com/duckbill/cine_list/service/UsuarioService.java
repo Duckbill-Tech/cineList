@@ -5,6 +5,7 @@ import com.duckbill.cine_list.db.repository.UsuarioRepository;
 import com.duckbill.cine_list.dto.UsuarioDTO;
 import com.duckbill.cine_list.mapper.UsuarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,18 +21,25 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // Metodo para criar um novo usuário com data de criação
+    @Autowired
+    private PasswordEncoder passwordEncoder; // Agora injetado corretamente
+
     public UsuarioDTO create(UsuarioDTO usuarioDTO) {
         Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
-        usuario.setId(UUID.randomUUID()); // Gera o UUID diretamente sem converter para String
+        usuario.setId(UUID.randomUUID()); // Gera o UUID diretamente
 
+        // Valida CPF
         if (!isValidCPF(usuario.getCpf())) {
             throw new IllegalArgumentException("CPF inválido");
         }
 
+        // Criptografa a senha antes de salvar
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+
         Usuario savedUsuario = usuarioRepository.save(usuario);
         return UsuarioMapper.toDto(savedUsuario);
     }
+
 
     // Metodo para buscar um usuário pelo ID
     public Optional<UsuarioDTO> getById(UUID id) {
