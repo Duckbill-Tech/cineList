@@ -1,33 +1,56 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { register } from "../../service/AuthService";
 
 function Registro() {
   const [CPF, setCPF] = useState("");
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [feedback, setFeedback] = useState("");
   const navigate = useNavigate();
 
   // Função chamada quando o cadastro for realizado
-  const handleCadastro = (event) => {
-    event.preventDefault(); // Previne o comportamento padrão do form de recarregar a página
+  const handleCadastro = async (event) => {
+    event.preventDefault(); // Previne o comportamento padrão do formulário
 
-    if (!CPF.trim() || !email.trim() || !senha.trim()) {
+    if (!CPF.trim() || !nome.trim() || !email.trim() || !senha.trim()) {
       setFeedback("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
 
-    setFeedback("Cadastro realizado com sucesso!");
-    setCPF("");
-    setEmail("");
-    setSenha("");
-    navigate("/login"); // Redireciona para a página de login após o cadastro
+    try {
+      // Chamada à API de registro
+      const response = await register(nome, email, CPF, senha);
+      console.log("Cadastro realizado com sucesso:", response);
+
+      setFeedback("Cadastro realizado com sucesso!");
+      setCPF("");
+      setNome("");
+      setEmail("");
+      setSenha("");
+
+      // Redireciona para a página de login após o cadastro
+      setTimeout(() => navigate("/login"), 2000);
+    } catch (error) {
+      console.error("Erro ao realizar cadastro:", error);
+      setFeedback("Erro ao realizar cadastro. Verifique os dados e tente novamente.");
+    }
   };
 
   return (
     <div className="flex justify-center items-center flex-grow py-10">
       <div className="w-full max-w-md space-y-6 p-8">
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+        <form onSubmit={handleCadastro} className="space-y-4">
+          <input
+            id="nome"
+            type="text"
+            placeholder="Nome"
+            className="w-full px-4 py-3 rounded-md text-black"
+            value={nome}
+            onChange={(event) => setNome(event.target.value)}
+            aria-required="true"
+          />
           <input
             id="CPF"
             type="text"
@@ -39,7 +62,7 @@ function Registro() {
           />
           <input
             id="email"
-            type="text"
+            type="email"
             placeholder="Email"
             className="w-full px-4 py-3 rounded-md text-black"
             value={email}
@@ -60,7 +83,7 @@ function Registro() {
             autoComplete="current-password"
           />
           <button
-            onClick={handleCadastro}
+            type="submit"
             className="border border-amber-500 text-amber-500 px-4 py-2 rounded-md font-medium w-full"
             aria-label="Clique para cadastrar"
           >

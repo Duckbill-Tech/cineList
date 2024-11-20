@@ -13,6 +13,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity // Classe de configuração
@@ -31,7 +36,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Desativa CSRF para APIs stateless
+                .csrf(csrf -> csrf.disable()) // Desativa CSRF para APIs REST stateless
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Define sessões como stateless
                 .authorizeHttpRequests(authorize -> authorize
                         // Permissões específicas para AuthController
@@ -50,7 +55,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/filmes").authenticated() // Criar filme
                         .requestMatchers(HttpMethod.GET, "/api/filmes").permitAll() // Listar filmes
                         .requestMatchers(HttpMethod.GET, "/api/filmes/{id}").permitAll() // Buscar filme por ID
-                        .requestMatchers(HttpMethod.PUT, "/api/filmes/{id}").authenticated()// Atualizar filme por ID
+                        .requestMatchers(HttpMethod.PUT, "/api/filmes/{id}").authenticated() // Atualizar filme por ID
                         .requestMatchers(HttpMethod.DELETE, "/api/filmes/{id}").authenticated() // Deletar logicamente
 
                         // Permissões abertas para Swagger e documentação
@@ -59,8 +64,23 @@ public class SecurityConfig {
                         // Qualquer outra requisição precisa de autenticação
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) // Adiciona filtro de segurança
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())); // Configura CORS diretamente no filtro
+
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Permite origem do frontend
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
+        configuration.setAllowedHeaders(List.of("*")); // Permite todos os cabeçalhos
+        configuration.setAllowCredentials(true); // Permite envio de cookies e credenciais
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Aplica configuração a todas as rotas
+        return source;
     }
 
     @Bean

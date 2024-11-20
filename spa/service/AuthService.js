@@ -24,7 +24,7 @@ export async function login(email, senha) {
 // FETCH FOR REGISTER
 export async function register(nome, email, cpf, senha) {
   try {
-    const response = await fetch("/auth/register", {
+    const response = await fetch("http://localhost:8081/auth/register", { 
       method: "POST",
       headers: {
         "Content-Type": "application/json",
