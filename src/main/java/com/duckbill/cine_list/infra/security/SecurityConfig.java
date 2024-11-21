@@ -20,7 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
-@EnableWebSecurity // Classe de configuração
+@EnableWebSecurity // Habilita a configuração de segurança
 public class SecurityConfig {
 
     @Autowired
@@ -61,6 +61,12 @@ public class SecurityConfig {
                         // Permissões abertas para Swagger e documentação
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
 
+                        // Permissões para Reset Password
+                        .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
+                        .requestMatchers("/reset-password", "/forgot-password").permitAll() // Permite o acesso sem autenticação
+                        .requestMatchers("/error", "/error/**").permitAll()
+
                         // Qualquer outra requisição precisa de autenticação
                         .anyRequest().authenticated()
                 )
@@ -73,10 +79,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Permite origem do frontend
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Permite a origem do frontend
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
         configuration.setAllowedHeaders(List.of("*")); // Permite todos os cabeçalhos
-        configuration.setAllowCredentials(true); // Permite envio de cookies e credenciais
+        configuration.setAllowCredentials(true); // Permite o envio de cookies e credenciais
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Aplica configuração a todas as rotas

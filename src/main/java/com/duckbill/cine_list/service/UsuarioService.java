@@ -171,12 +171,12 @@ public class UsuarioService {
      * @param email O email do usuário.
      * @return true se o email foi enviado com sucesso; false caso contrário.
      */
-    public boolean generateAndSendPasswordResetToken(String email) {
+    public String generateAndSendPasswordResetToken(String email) {
         Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
 
         // Verifica se o usuário existe
         if (optionalUsuario.isEmpty()) {
-            return false; // Email não encontrado
+            return null; // Email não encontrado
         }
 
         Usuario usuario = optionalUsuario.get();
@@ -192,7 +192,8 @@ public class UsuarioService {
         // Envia o email de redefinição de senha
         emailService.sendPasswordResetEmail(email, token);
 
-        return true;
+        // Retorna o token gerado
+        return token;
     }
 
     // Redefine a senha usando o token

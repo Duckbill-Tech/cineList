@@ -1,6 +1,5 @@
 package com.duckbill.cine_list.infra.security;
 
-import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,6 +27,8 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        // Recupera e valida o token JWT
         String token = this.recoverToken(request);
         String email = (token != null) ? tokenService.validateToken(token) : null;
 
@@ -36,12 +37,10 @@ public class SecurityFilter extends OncePerRequestFilter {
                 var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
                 var authentication = new UsernamePasswordAuthenticationToken(usuario, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                // Adicione um print para verificar o contexto de autenticação
-                System.out.println("Autenticação configurada: " + SecurityContextHolder.getContext().getAuthentication());
             });
         }
 
+        // Continua a cadeia de filtros sem a verificação de rotas públicas
         filterChain.doFilter(request, response);
     }
 

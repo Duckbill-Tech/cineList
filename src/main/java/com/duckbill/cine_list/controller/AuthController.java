@@ -5,6 +5,8 @@ import com.duckbill.cine_list.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -47,19 +49,32 @@ public class AuthController {
     }
 
     // Esqueci minha senha (gera e envia token)
-    @PostMapping("/auth/forgot-password")
+    @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody String email) {
         if (email == null || email.isEmpty()) {
             return ResponseEntity.badRequest().body("E-mail é obrigatório.");
         }
 
-        boolean emailSent = usuarioService.generateAndSendPasswordResetToken(email);
-        return ResponseEntity.ok("Se o e-mail existir em nossa base, as instruções de recuperação foram enviadas.");
+        String token = usuarioService.generateAndSendPasswordResetToken(email);
+
+        if (token == null) {
+            // Retorna mensagem genérica para não expor a existência ou não do e-mail no sistema
+            return ResponseEntity.ok("Se o e-mail existir em nossa base, as instruções de recuperação foram enviadas.");
+        }
+
+        // Opcional: Retornar o token para desenvolvimento ou debug
+        return ResponseEntity.ok(Map.of(
+                "message", "Se o e-mail existir em nossa base, as instruções de recuperação foram enviadas.",
+                "token", token
+        ));
     }
 
     // Redefinir senha
-    @PostMapping("/auth/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> payload) {
+        String token = payload.get("token");
+        String newPassword = payload.get("newPassword");
+
         if (newPassword == null || newPassword.isEmpty()) {
             return ResponseEntity.badRequest().body("A nova senha é obrigatória.");
         }
@@ -71,5 +86,4 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Token inválido ou expirado.");
         }
     }
-
 }

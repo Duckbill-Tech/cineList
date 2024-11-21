@@ -3,6 +3,7 @@ package com.duckbill.cine_list.service;
 import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.UsuarioRepository;
 import com.duckbill.cine_list.dto.UsuarioDTO;
+
 import com.duckbill.cine_list.infra.security.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +32,7 @@ public class UsuarioServiceTest {
     @Mock
     private UsuarioRepository usuarioRepository;
 
+    @Mock
     private TokenService tokenService;
 
     @Mock
@@ -37,9 +41,6 @@ public class UsuarioServiceTest {
     private UsuarioDTO usuarioDTO;
     private UUID usuarioId;
 
-    /* O metodo setUp é executado antes de cada teste, criando um Usuario de exemplo com dados válidos.
-       Usa when(usuarioRepository.findById(any())) para simular o metodo findById do repositório,
-       retornando sempre um Optional com o usuário de exemplo ao buscar qualquer ID.*/
     @BeforeEach
     void setUp() {
         usuarioId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
@@ -63,19 +64,23 @@ public class UsuarioServiceTest {
         );
 
         lenient().when(usuarioRepository.findById(any(UUID.class))).thenReturn(Optional.of(usuario));
-   }
+    }
 
-    /* Teste para verificar se o metodo create de usuarioService lança uma exceção
-         IllegalArgumentException ao tentar criar um usuário com um CPF inválido.*/
     @Test
     void testCreateUsuarioWithInvalidCpf() {
-        UsuarioDTO invalidUsuarioDTO = new UsuarioDTO(null, "Invalid User", "invalid@example.com", "11111111111", "somePassword", null, null, null);
+        UsuarioDTO invalidUsuarioDTO = new UsuarioDTO(
+                null,
+                "Invalid User",
+                "invalid@example.com",
+                "11111111111",
+                "somePassword",
+                null,
+                null,
+                null
+        );
         assertThrows(IllegalArgumentException.class, () -> usuarioService.create(invalidUsuarioDTO));
     }
 
-    /* Este teste verifica se o metodo getById retorna um Optional presente ao buscar um usuário
-     com um ID válido (UUID.fromString("123e4567-e89b-12d3-a456-426614174000")),
-     utilizando o usuário mock configurado em setUp.*/
     @Test
     void testGetById() {
         Optional<UsuarioDTO> usuario = usuarioService.getById(usuarioId);
@@ -88,27 +93,32 @@ public class UsuarioServiceTest {
 
     @Test
     void testGenerateAndSendPasswordResetToken_Success() {
+        // Configura um usuário de exemplo
         Usuario usuario = new Usuario();
         usuario.setEmail("test@example.com");
-        usuario.setPasswordResetToken(null);
 
+        // Configura os mocks
         when(usuarioRepository.findByEmail("test@example.com")).thenReturn(Optional.of(usuario));
-        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+        when(tokenService.generateToken(usuario)).thenReturn("mocked-token");
+        doNothing().when(emailService).sendPasswordResetEmail(anyString(), anyString());
 
-        boolean result = usuarioService.generateAndSendPasswordResetToken("test@example.com");
+        // Chama o método
+        String result = usuarioService.generateAndSendPasswordResetToken("test@example.com");
 
-        assertTrue(result);
-        verify(emailService, times(1)).sendPasswordResetEmail(eq("test@example.com"), anyString());
-        verify(usuarioRepository, times(1)).save(any(Usuario.class));
+        // Verifica os resultados
+        assertNotNull(result);
+        assertEquals("mocked-token", result);
+        verify(emailService, times(1)).sendPasswordResetEmail(eq("test@example.com"), eq("mocked-token"));
+        verify(usuarioRepository, times(1)).save(usuario);
     }
 
     @Test
     void testGenerateAndSendPasswordResetToken_EmailNotFound() {
         when(usuarioRepository.findByEmail("notfound@example.com")).thenReturn(Optional.empty());
 
-        boolean result = usuarioService.generateAndSendPasswordResetToken("notfound@example.com");
+        String result = usuarioService.generateAndSendPasswordResetToken("notfound@example.com");
 
-        assertFalse(result);
+        assertNull(result);
         verify(emailService, never()).sendPasswordResetEmail(anyString(), anyString());
     }
 

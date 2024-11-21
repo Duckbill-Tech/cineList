@@ -13,10 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -179,13 +176,17 @@ public class UsuarioControllerTest {
     void testForgotPassword() {
         String email = "user@example.com";
 
-        // Simula o retorno do método boolean
-        when(usuarioService.generateAndSendPasswordResetToken(email)).thenReturn(true);
+        when(usuarioService.generateAndSendPasswordResetToken(anyString())).thenReturn("mocked-token");
 
         ResponseEntity<?> response = usuarioController.forgotPassword(email);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Instruções de recuperação de senha enviadas.", response.getBody());
+
+        Map<String, Object> expectedResponse = Map.of(
+                "message", "Se o e-mail existir em nossa base, as instruções de recuperação foram enviadas.",
+                "token", "mocked-token"
+        );
+        assertEquals(expectedResponse, response.getBody());
         verify(usuarioService, times(1)).generateAndSendPasswordResetToken(email);
     }
 
