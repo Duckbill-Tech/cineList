@@ -43,3 +43,25 @@ export async function register(nome, email, cpf, senha) {
     throw error;
   }
 }
+
+// FETCH FOR RESET PASSWORD
+export async function resetPassword(token, newPassword) {
+  try {
+    const response = await fetch(`/auth/reset-password?token=${token}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ newPassword }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao redefinir senha: " + response.statusText);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Erro ao redefinir senha:", error);
+    throw error;
+  }
+}

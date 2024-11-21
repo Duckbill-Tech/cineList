@@ -4,6 +4,8 @@ import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.UsuarioRepository;
 import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
+import com.duckbill.cine_list.exception.InvalidTokenException;
+import com.duckbill.cine_list.exception.UserNotFoundException;
 import com.duckbill.cine_list.infra.security.TokenService;
 import com.duckbill.cine_list.mapper.UsuarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class UsuarioService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private EmailService emailService;
 
     // Metodo para registrar um novo usuário e retornar o token
     public ResponseDTO register(UsuarioDTO usuarioDTO) {
@@ -154,5 +159,35 @@ public class UsuarioService {
         }
         int resto = 11 - (soma % 11);
         return (resto > 9) ? 0 : resto;
+    }
+
+    // Metodo para gerar token de redefinição de senha
+    public void generatePasswordResetToken(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        // Gera um token e define o tempo de expiração
+        String token = UUID.randomUUID().toString();
+        usuario.setPasswordResetToken(token);
+        usuario.setTokenExpirationTime(LocalDateTime.now().plusMinutes(30));
+        usuarioRepository.save(usuario);
+
+        // Envia o email com o token
+        emailService.sendPasswordResetEmail(email, token);
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        Usuario usuario = usuarioRepository.findByPasswordResetToken(token)
+                .orElseThrow(() -> new InvalidTokenException("Token inválido ou não encontrado."));
+
+        if (usuario.getTokenExpirationTime().isBefore(LocalDateTime.now())) {
+            throw new InvalidTokenException("Token expirado. Por favor, solicite novamente a recuperação de senha.");
+        }
+
+        usuario.setSenha(passwordEncoder.encode(newPassword));
+        usuario.setPasswordResetToken(null);
+        usuario.setTokenExpirationTime(null);
+
+        usuarioRepository.save(usuario);
     }
 }

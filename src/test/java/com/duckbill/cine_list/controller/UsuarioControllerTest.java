@@ -1,5 +1,6 @@
 package com.duckbill.cine_list.controller;
 
+import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
 import com.duckbill.cine_list.service.UsuarioService;
@@ -142,7 +143,7 @@ public class UsuarioControllerTest {
         assertEquals(updatedResponseDTO.nome(), response.getBody().nome());
         assertEquals(updatedResponseDTO.token(), response.getBody().token());
 
-        // Garante que o método de serviço foi chamado uma vez com os parâmetros corretos
+        // Garante que o metodo de serviço foi chamado uma vez com os parâmetros corretos
         verify(usuarioService, times(1)).update(eq(id), any(UsuarioDTO.class));
     }
 
@@ -159,7 +160,7 @@ public class UsuarioControllerTest {
         // Verifica o status da resposta
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 
-        // Garante que o método de serviço foi chamado uma vez com os parâmetros corretos
+        // Garante que o metodo de serviço foi chamado uma vez com os parâmetros corretos
         verify(usuarioService, times(1)).update(eq(id), any(UsuarioDTO.class));
     }
 
@@ -172,5 +173,30 @@ public class UsuarioControllerTest {
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         verify(usuarioService, times(1)).delete(id);
+    }
+
+    // Testa a geração de token de redefinição de senha
+    @Test
+    void testGeneratePasswordResetTokenSuccess() {
+        doNothing().when(usuarioService).generatePasswordResetToken("test@usuario.com");
+
+        ResponseEntity<?> response = usuarioController.generatePasswordResetToken("test@usuario.com");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Instruções enviadas para o email.", response.getBody());
+        verify(usuarioService, times(1)).generatePasswordResetToken("test@usuario.com");
+    }
+
+    // Testa o caso em que o usuário para redefinição de senha não é encontrado
+    @Test
+    void testGeneratePasswordResetTokenUserNotFound() {
+        doThrow(new IllegalArgumentException("Usuário não encontrado"))
+                .when(usuarioService).generatePasswordResetToken("notfound@usuario.com");
+
+        ResponseEntity<?> response = usuarioController.generatePasswordResetToken("notfound@usuario.com");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Usuário não encontrado", response.getBody());
+        verify(usuarioService, times(1)).generatePasswordResetToken("notfound@usuario.com");
     }
 }

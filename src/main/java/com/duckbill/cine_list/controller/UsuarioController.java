@@ -90,4 +90,16 @@ public class UsuarioController {
     public ResponseEntity<String> getUser() {
         return ResponseEntity.ok("sucesso!");
     }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> generatePasswordResetToken(@RequestParam String email) {
+        try {
+            usuarioService.generatePasswordResetToken(email);
+            return ResponseEntity.ok("Instruções enviadas para o email.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar solicitação.");
+        }
+    }
 }

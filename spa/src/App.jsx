@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Registro from "./pages/Registro";
 import RecuperarSenha from "./pages/RecuperarSenha";
+import ResetPassword from "./pages/ResetPassword";
 import Layout from "./components/Layout";
 import "./index.css";
 
@@ -75,7 +76,15 @@ function App() {
             </Layout>
           }
         />
-
+        {/* Rota para a página de redefinição de senha */}
+        <Route
+          path="/reset-password"
+          element={
+            <Layout>
+              <ResetPassword />
+            </Layout>
+          }
+        />
         {/* Rota para página não encontrada */}
         <Route
           path="*"

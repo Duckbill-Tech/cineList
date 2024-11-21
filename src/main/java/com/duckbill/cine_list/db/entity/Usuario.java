@@ -30,6 +30,12 @@ public class Usuario {
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Filme> filmesCriados;
 
+    @Column(name = "password_reset_token")
+    private String passwordResetToken; // Token para redefinição de senha
+
+    @Column(name = "token_expiration_time")
+    private LocalDateTime tokenExpirationTime; // Validade do token
+
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -113,4 +119,12 @@ public class Usuario {
     public void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
     }
+
+    public String getPasswordResetToken() { return passwordResetToken; }
+
+    public void setPasswordResetToken(String passwordResetToken) { this.passwordResetToken = passwordResetToken; }
+
+    public LocalDateTime getTokenExpirationTime() { return tokenExpirationTime; }
+
+    public void setTokenExpirationTime(LocalDateTime tokenExpirationTime) { this.tokenExpirationTime = tokenExpirationTime; }
 }
