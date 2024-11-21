@@ -1,5 +1,5 @@
 #surefire
-#Thu Nov 21 14:12:19 GMT-03:00 2024
+#Thu Nov 21 14:18:07 GMT-03:00 2024
 childDelegation=false
 classPathUrl.0=/Users/katerinewitkoski/Documents/cineList/target/test-classes
 classPathUrl.1=/Users/katerinewitkoski/Documents/cineList/target/classes
@@ -131,7 +131,7 @@ mainCliOptions1=LOGGING_LEVEL_WARN
 mainCliOptions2=LOGGING_LEVEL_INFO
 mainCliOptions3=LOGGING_LEVEL_DEBUG
 mainCliOptions4=SHOW_ERRORS
-pluginPid=74819
+pluginPid=75034
 preferTestsFromInStream=false
 providerConfiguration=org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
 reportsDirectory=/Users/katerinewitkoski/Documents/cineList/target/surefire-reports
