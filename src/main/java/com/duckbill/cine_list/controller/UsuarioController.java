@@ -77,6 +77,7 @@ public class UsuarioController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
     // Endpoint para excluir logicamente um usuário por ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUsuario(@PathVariable UUID id) {
@@ -91,15 +92,32 @@ public class UsuarioController {
         return ResponseEntity.ok("sucesso!");
     }
 
+    // Endpoint para resetar a senha
     @PostMapping("/reset-password")
-    public ResponseEntity<?> generatePasswordResetToken(@RequestParam String email) {
+    public ResponseEntity<?> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        if (newPassword == null || newPassword.isEmpty()) {
+            return ResponseEntity.badRequest().body("A nova senha é obrigatória.");
+        }
+
+        boolean resetSuccess = usuarioService.resetPasswordWithToken(token, newPassword);
+        if (resetSuccess) {
+            return ResponseEntity.ok("Senha redefinida com sucesso.");
+        } else {
+            return ResponseEntity.badRequest().body("Token inválido ou expirado.");
+        }
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody String email) {
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body("E-mail é obrigatório.");
+        }
+
         try {
-            usuarioService.generatePasswordResetToken(email);
-            return ResponseEntity.ok("Instruções enviadas para o email.");
+            usuarioService.generateAndSendPasswordResetToken(email);
+            return ResponseEntity.ok("Instruções de recuperação de senha enviadas.");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar solicitação.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 }

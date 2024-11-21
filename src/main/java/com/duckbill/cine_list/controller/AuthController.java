@@ -1,10 +1,7 @@
 package com.duckbill.cine_list.controller;
 
 import com.duckbill.cine_list.dto.*;
-import com.duckbill.cine_list.exception.InvalidTokenException;
-import com.duckbill.cine_list.exception.UserNotFoundException;
 import com.duckbill.cine_list.service.UsuarioService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,37 +46,29 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/forgot-password")
+    // Esqueci minha senha (gera e envia token)
+    @PostMapping("/auth/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody String email) {
-        try {
-            usuarioService.generatePasswordResetToken(email); // Gera o token
-            return ResponseEntity.ok("Instruções enviadas para o email.");
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body("E-mail é obrigatório.");
         }
+
+        boolean emailSent = usuarioService.generateAndSendPasswordResetToken(email);
+        return ResponseEntity.ok("Se o e-mail existir em nossa base, as instruções de recuperação foram enviadas.");
     }
 
-    @PostMapping("/reset-password")
+    // Redefinir senha
+    @PostMapping("/auth/reset-password")
     public ResponseEntity<?> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
-        try {
-            usuarioService.resetPassword(token, newPassword);
-            return ResponseEntity.ok("Senha redefinida com sucesso.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar solicitação.");
+        if (newPassword == null || newPassword.isEmpty()) {
+            return ResponseEntity.badRequest().body("A nova senha é obrigatória.");
         }
-    }
 
-    @PostMapping("/forgot-password")
-    public ResponseEntity<?> generatePasswordResetToken(@RequestParam String email) {
-        try {
-            usuarioService.generatePasswordResetToken(email);
-            return ResponseEntity.ok("Instruções enviadas para o email.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar solicitação.");
+        boolean resetSuccess = usuarioService.resetPasswordWithToken(token, newPassword);
+        if (resetSuccess) {
+            return ResponseEntity.ok("Senha redefinida com sucesso.");
+        } else {
+            return ResponseEntity.badRequest().body("Token inválido ou expirado.");
         }
     }
 

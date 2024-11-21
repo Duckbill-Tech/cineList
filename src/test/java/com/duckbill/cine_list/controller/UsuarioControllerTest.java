@@ -1,6 +1,5 @@
 package com.duckbill.cine_list.controller;
 
-import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
 import com.duckbill.cine_list.service.UsuarioService;
@@ -175,28 +174,72 @@ public class UsuarioControllerTest {
         verify(usuarioService, times(1)).delete(id);
     }
 
-    // Testa a geração de token de redefinição de senha
+    // Testa a funcionalidade "Esqueci minha senha" com sucesso
     @Test
-    void testGeneratePasswordResetTokenSuccess() {
-        doNothing().when(usuarioService).generatePasswordResetToken("test@usuario.com");
+    void testForgotPassword() {
+        String email = "user@example.com";
 
-        ResponseEntity<?> response = usuarioController.generatePasswordResetToken("test@usuario.com");
+        // Simula o retorno do método boolean
+        when(usuarioService.generateAndSendPasswordResetToken(email)).thenReturn(true);
+
+        ResponseEntity<?> response = usuarioController.forgotPassword(email);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Instruções enviadas para o email.", response.getBody());
-        verify(usuarioService, times(1)).generatePasswordResetToken("test@usuario.com");
+        assertEquals("Instruções de recuperação de senha enviadas.", response.getBody());
+        verify(usuarioService, times(1)).generateAndSendPasswordResetToken(email);
     }
 
-    // Testa o caso em que o usuário para redefinição de senha não é encontrado
+    // Testa "Esqueci minha senha" com e-mail inválido
     @Test
-    void testGeneratePasswordResetTokenUserNotFound() {
-        doThrow(new IllegalArgumentException("Usuário não encontrado"))
-                .when(usuarioService).generatePasswordResetToken("notfound@usuario.com");
+    void testForgotPasswordInvalidEmail() {
+        String email = "";
 
-        ResponseEntity<?> response = usuarioController.generatePasswordResetToken("notfound@usuario.com");
+        ResponseEntity<?> response = usuarioController.forgotPassword(email);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Usuário não encontrado", response.getBody());
-        verify(usuarioService, times(1)).generatePasswordResetToken("notfound@usuario.com");
+        assertEquals("E-mail é obrigatório.", response.getBody());
+        verify(usuarioService, never()).generateAndSendPasswordResetToken(anyString());
     }
+
+    // Testa redefinição de senha com token inválido ou expirado
+    @Test
+    void testResetPasswordValidToken() {
+        String token = "valid-token";
+        String newPassword = "newPassword123";
+
+        when(usuarioService.resetPasswordWithToken(token, newPassword)).thenReturn(true);
+
+        ResponseEntity<?> response = usuarioController.resetPassword(token, newPassword);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Senha redefinida com sucesso.", response.getBody());
+        verify(usuarioService, times(1)).resetPasswordWithToken(token, newPassword);
+    }
+
+    @Test
+    void testResetPasswordInvalidToken() {
+        String token = "invalid-token";
+        String newPassword = "newPassword123";
+
+        when(usuarioService.resetPasswordWithToken(token, newPassword)).thenReturn(false);
+
+        ResponseEntity<?> response = usuarioController.resetPassword(token, newPassword);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Token inválido ou expirado.", response.getBody());
+        verify(usuarioService, times(1)).resetPasswordWithToken(token, newPassword);
+    }
+
+    @Test
+    void testResetPasswordInvalidNewPassword() {
+        String token = "valid-token";
+        String newPassword = "";
+
+        ResponseEntity<?> response = usuarioController.resetPassword(token, newPassword);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("A nova senha é obrigatória.", response.getBody());
+        verify(usuarioService, never()).resetPasswordWithToken(anyString(), anyString());
+    }
+
 }

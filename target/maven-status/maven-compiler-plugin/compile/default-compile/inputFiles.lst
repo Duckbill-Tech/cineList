@@ -12,8 +12,6 @@
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/ResetPasswordRequest.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/ResponseDTO.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/UsuarioDTO.java
-/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/exception/InvalidTokenException.java
-/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/exception/UserNotFoundException.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/infra/security/CustomUserDetailsService.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/infra/security/SecurityConfig.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/infra/security/SecurityFilter.java

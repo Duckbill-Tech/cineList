@@ -17,15 +17,26 @@ public class EmailService {
      * @param token O token de redefinição de senha.
      */
     public void sendPasswordResetEmail(String userEmail, String token) {
+        if (userEmail == null || userEmail.isEmpty()) {
+            // Loga a ausência de e-mail e retorna sem enviar
+            System.err.println("Email não fornecido. Ignorando envio de email.");
+            return;
+        }
+        if (token == null || token.isEmpty()) {
+            // Loga a ausência do token e retorna sem enviar
+            System.err.println("Token não fornecido. Ignorando envio de email.");
+            return;
+        }
+
         String subject = "Recuperação de Senha";
         String body = "Para redefinir sua senha, clique no link: http://cinelist.com/reset-password?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(userEmail);
-        message.setFrom("duckbilltech@gmail.com"); // Email de remetente
+        message.setFrom("duckbilltech@gmail.com");
         message.setSubject(subject);
         message.setText(body);
 
-        mailSender.send(message); // mailSender é um JavaMailSender configurado
+        mailSender.send(message);
     }
 }

@@ -4,11 +4,10 @@ import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.UsuarioRepository;
 import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
-import com.duckbill.cine_list.exception.InvalidTokenException;
-import com.duckbill.cine_list.exception.UserNotFoundException;
 import com.duckbill.cine_list.infra.security.TokenService;
 import com.duckbill.cine_list.mapper.UsuarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 public class UsuarioService {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -31,7 +30,12 @@ public class UsuarioService {
     private TokenService tokenService;
 
     @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
+
+    public UsuarioService(UsuarioRepository usuarioRepository, EmailService emailService) {
+        this.usuarioRepository = usuarioRepository;
+        this.emailService = emailService;
+    }
 
     // Metodo para registrar um novo usuário e retornar o token
     public ResponseDTO register(UsuarioDTO usuarioDTO) {
@@ -161,33 +165,51 @@ public class UsuarioService {
         return (resto > 9) ? 0 : resto;
     }
 
-    // Metodo para gerar token de redefinição de senha
-    public void generatePasswordResetToken(String email) {
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+    /**
+     * Gera um token de redefinição de senha e envia para o email do usuário.
+     *
+     * @param email O email do usuário.
+     * @return true se o email foi enviado com sucesso; false caso contrário.
+     */
+    public boolean generateAndSendPasswordResetToken(String email) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
 
-        // Gera um token e define o tempo de expiração
-        String token = UUID.randomUUID().toString();
-        usuario.setPasswordResetToken(token);
-        usuario.setTokenExpirationTime(LocalDateTime.now().plusMinutes(30));
-        usuarioRepository.save(usuario);
-
-        // Envia o email com o token
-        emailService.sendPasswordResetEmail(email, token);
-    }
-
-    public void resetPassword(String token, String newPassword) {
-        Usuario usuario = usuarioRepository.findByPasswordResetToken(token)
-                .orElseThrow(() -> new InvalidTokenException("Token inválido ou não encontrado."));
-
-        if (usuario.getTokenExpirationTime().isBefore(LocalDateTime.now())) {
-            throw new InvalidTokenException("Token expirado. Por favor, solicite novamente a recuperação de senha.");
+        // Verifica se o usuário existe
+        if (optionalUsuario.isEmpty()) {
+            return false; // Email não encontrado
         }
 
-        usuario.setSenha(passwordEncoder.encode(newPassword));
-        usuario.setPasswordResetToken(null);
-        usuario.setTokenExpirationTime(null);
+        Usuario usuario = optionalUsuario.get();
 
+        // Gera um token único e define a expiração para 1 hora
+        String token = UUID.randomUUID().toString();
+        usuario.setPasswordResetToken(token);
+        usuario.setTokenExpirationTime(LocalDateTime.now().plusHours(1));
+
+        // Salva o token e a expiração no banco de dados
         usuarioRepository.save(usuario);
+
+        // Envia o email de redefinição de senha
+        emailService.sendPasswordResetEmail(email, token);
+
+        return true;
+    }
+
+    // Redefine a senha usando o token
+
+    public boolean resetPasswordWithToken(String token, String newPassword) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByPasswordResetToken(token);
+        if (optionalUsuario.isPresent()) {
+            Usuario usuario = optionalUsuario.get();
+            if (usuario.getTokenExpirationTime() != null && usuario.getTokenExpirationTime().isBefore(LocalDateTime.now())) {
+                return false; // Token expirado
+            }
+            usuario.setSenha(new BCryptPasswordEncoder().encode(newPassword));
+            usuario.setPasswordResetToken(null);
+            usuario.setTokenExpirationTime(null);
+            usuarioRepository.save(usuario);
+            return true;
+        }
+        return false;
     }
 }

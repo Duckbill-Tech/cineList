@@ -8,12 +8,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CineListApplication {
 
 	public static void main(String[] args) {
-		// Carrega as variáveis do arquivo .env
-		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+		// Carregar as variáveis do .env, ignorando se o arquivo não estiver presente
+		Dotenv dotenv = Dotenv.configure()
+				.ignoreIfMissing()
+				.load();
 
-		// Adiciona cada variável do .env no System para o Spring poder utilizá-las
-		dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
-
+		// Carregar as variáveis do .env no System Properties (se ainda não estiverem definidas)
+		dotenv.entries().forEach(entry -> {
+			if (System.getProperty(entry.getKey()) == null) {
+				System.setProperty(entry.getKey(), entry.getValue());
+			}
+		});
 		SpringApplication.run(CineListApplication.class, args);
 	}
 }

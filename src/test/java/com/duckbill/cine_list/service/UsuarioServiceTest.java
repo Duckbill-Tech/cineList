@@ -3,7 +3,7 @@ package com.duckbill.cine_list.service;
 import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.UsuarioRepository;
 import com.duckbill.cine_list.dto.UsuarioDTO;
-import com.duckbill.cine_list.mapper.UsuarioMapper;
+import com.duckbill.cine_list.infra.security.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,6 +28,11 @@ public class UsuarioServiceTest {
 
     @Mock
     private UsuarioRepository usuarioRepository;
+
+    private TokenService tokenService;
+
+    @Mock
+    private EmailService emailService;
 
     private UsuarioDTO usuarioDTO;
     private UUID usuarioId;
@@ -78,5 +84,73 @@ public class UsuarioServiceTest {
         assertEquals(usuarioDTO.getEmail(), usuario.get().getEmail());
         assertEquals(usuarioDTO.getCpf(), usuario.get().getCpf());
         assertEquals(usuarioDTO.getSenha(), usuario.get().getSenha());
+    }
+
+    @Test
+    void testGenerateAndSendPasswordResetToken_Success() {
+        Usuario usuario = new Usuario();
+        usuario.setEmail("test@example.com");
+        usuario.setPasswordResetToken(null);
+
+        when(usuarioRepository.findByEmail("test@example.com")).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+
+        boolean result = usuarioService.generateAndSendPasswordResetToken("test@example.com");
+
+        assertTrue(result);
+        verify(emailService, times(1)).sendPasswordResetEmail(eq("test@example.com"), anyString());
+        verify(usuarioRepository, times(1)).save(any(Usuario.class));
+    }
+
+    @Test
+    void testGenerateAndSendPasswordResetToken_EmailNotFound() {
+        when(usuarioRepository.findByEmail("notfound@example.com")).thenReturn(Optional.empty());
+
+        boolean result = usuarioService.generateAndSendPasswordResetToken("notfound@example.com");
+
+        assertFalse(result);
+        verify(emailService, never()).sendPasswordResetEmail(anyString(), anyString());
+    }
+
+    @Test
+    void testResetPasswordWithToken_ValidToken() {
+        String validToken = "validToken";
+        Usuario usuario = new Usuario();
+        usuario.setPasswordResetToken(validToken);
+        usuario.setTokenExpirationTime(LocalDateTime.now().plusHours(1));
+
+        when(usuarioRepository.findByPasswordResetToken(validToken)).thenReturn(Optional.of(usuario));
+
+        boolean result = usuarioService.resetPasswordWithToken(validToken, "newPassword");
+
+        assertTrue(result);
+        assertNull(usuario.getPasswordResetToken());
+        assertNull(usuario.getTokenExpirationTime());
+        verify(usuarioRepository, times(1)).save(usuario);
+    }
+
+    @Test
+    void testResetPasswordWithToken_ExpiredToken() {
+        String expiredToken = "expiredToken";
+        Usuario usuario = new Usuario();
+        usuario.setPasswordResetToken(expiredToken);
+        usuario.setTokenExpirationTime(LocalDateTime.now().minusHours(1));
+
+        when(usuarioRepository.findByPasswordResetToken(expiredToken)).thenReturn(Optional.of(usuario));
+
+        boolean result = usuarioService.resetPasswordWithToken(expiredToken, "newPassword");
+
+        assertFalse(result);
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void testResetPasswordWithToken_InvalidToken() {
+        when(usuarioRepository.findByPasswordResetToken("invalidToken")).thenReturn(Optional.empty());
+
+        boolean result = usuarioService.resetPasswordWithToken("invalidToken", "newPassword");
+
+        assertFalse(result);
+        verify(usuarioRepository, never()).save(any());
     }
 }

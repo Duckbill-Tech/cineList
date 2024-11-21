@@ -45,6 +45,7 @@ class AuthControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ResponseDTO responseBody = (ResponseDTO) response.getBody();
+        assert responseBody != null;
         assertEquals("Test Usuario", responseBody.nome());
         assertEquals("mockedToken", responseBody.token());
         verify(usuarioService, times(1)).login(loginRequest.email(), loginRequest.senha());
@@ -90,69 +91,4 @@ class AuthControllerTest {
     }
 
     // TESTE PARA ENVIO DE UM EMAIL DE RECUPERAÇÃO
-    @Test
-    void testForgotPasswordSuccess() {
-        // Simula um email enviado com sucesso
-        doNothing().when(usuarioService).generatePasswordResetToken("test@usuario.com");
-
-        ResponseEntity<?> response = authController.forgotPassword("test@usuario.com");
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Instruções enviadas para o email.", response.getBody());
-        verify(usuarioService, times(1)).generatePasswordResetToken("test@usuario.com");
-    }
-
-    @Test
-    void testForgotPasswordUserNotFound() {
-        // Configura o mock para lançar uma exceção ao tentar gerar o token para um email inexistente
-        doThrow(new IllegalArgumentException("Usuário não encontrado"))
-                .when(usuarioService).generatePasswordResetToken("notfound@usuario.com");
-
-        // Executa o endpoint do controlador
-        ResponseEntity<?> response = authController.generatePasswordResetToken("notfound@usuario.com");
-
-        // Verifica se o retorno é HTTP 400 (BAD REQUEST)
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-
-        // Verifica se a mensagem de erro está correta
-        assertEquals("Usuário não encontrado", response.getBody());
-
-        // Garante que o metodo foi chamado uma vez
-        verify(usuarioService, times(1)).generatePasswordResetToken("notfound@usuario.com");
-    }
-
-    @Test
-    void testResetPasswordExpiredToken() {
-        doThrow(new IllegalArgumentException("Token expirado"))
-                .when(usuarioService).resetPassword("expired-token", "new-password");
-
-        ResponseEntity<?> response = authController.resetPassword("expired-token", "new-password");
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Token expirado", response.getBody());
-        verify(usuarioService, times(1)).resetPassword("expired-token", "new-password");
-    }
-
-    @Test
-    void testResetPasswordInvalidToken() {
-        doThrow(new IllegalArgumentException("Token inválido"))
-                .when(usuarioService).resetPassword("invalid-token", "new-password");
-
-        ResponseEntity<?> response = authController.resetPassword("invalid-token", "new-password");
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Token inválido", response.getBody());
-        verify(usuarioService, times(1)).resetPassword("invalid-token", "new-password");
-    }
-
-    @Test
-    void testResetPasswordSuccess() {
-        doNothing().when(usuarioService).resetPassword("valid-token", "new-password");
-
-        ResponseEntity<?> response = authController.resetPassword("valid-token", "new-password");
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Senha redefinida com sucesso.", response.getBody());
-        verify(usuarioService, times(1)).resetPassword("valid-token", "new-password");
-    }
 }
