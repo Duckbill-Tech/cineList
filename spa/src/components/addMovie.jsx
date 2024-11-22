@@ -1,7 +1,8 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
+import { createFilme } from "../../service/FilmeService"; // Certifique-se de importar sua função de serviço
 
-function AddMovie({ createFilme }) {
+function AddMovie({ userEmail }) {
   const [title, setTitle] = useState("");
   const [feedback, setFeedback] = useState("");
 
@@ -12,10 +13,10 @@ function AddMovie({ createFilme }) {
     }
 
     try {
-      // Substitua '12345' pelo ID real do usuário ou torne dinâmico
-      const usuarioId = "12345";
+      const usuarioId = userEmail; // Usa o email do usuário como ID
       const filmeDTO = { titulo: title }; // Ajuste conforme o esperado pelo backend
 
+      // Chama a função createFilme que já faz o fetch para adicionar o filme
       await createFilme(filmeDTO, usuarioId);
       setTitle("");
       setFeedback("Filme adicionado com sucesso!");
@@ -62,7 +63,7 @@ function AddMovie({ createFilme }) {
 }
 
 AddMovie.propTypes = {
-  createFilme: PropTypes.func.isRequired,
+  userEmail: PropTypes.string.isRequired, // Recebe o email do usuário como prop
 };
 
 export default AddMovie;

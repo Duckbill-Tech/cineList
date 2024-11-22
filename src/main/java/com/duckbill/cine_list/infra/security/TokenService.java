@@ -28,6 +28,7 @@ public class TokenService {
                     .withIssuer("cine-list-api")                // Nome da aplicação ou API
                     .withSubject(usuario.getEmail())            // Identificador do usuário, por exemplo, o email
                     .withClaim("authorities", Collections.singletonList("ROLE_USER")) // Define a autoridade
+                    .withClaim("userId", usuario.getId().toString())
                     .withExpiresAt(this.generateExpirationDate()) // Define a data de expiração
                     .sign(algorithm);                          // Assina o token com o algoritmo HMAC256 e a chave secreta
         } catch (JWTCreationException exception) {

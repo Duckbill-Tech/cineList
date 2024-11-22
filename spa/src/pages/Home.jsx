@@ -7,6 +7,7 @@ import Movies from "../components/Movies";
 import MoviesSeen from "../components/MoviesSeen";
 import Katerine from "../components/Katerine";
 import Nathalie from "../components/Nathalie";
+import { getAllFilmes, createFilme } from "../../service/FilmeService"; // Adicione sua função de serviço
 
 function Home() {
   useEffect(() => {
@@ -19,13 +20,22 @@ function Home() {
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
 
-  const [movies, setMovies] = useState([
-    { id: 1, title: "filme 1", inSeen: false },
-    { id: 2, title: "filme 2", inSeen: false },
-    { id: 3, title: "filme 3", inSeen: false },
-  ]);
-
+  const [movies, setMovies] = useState([]);
   const [moviesSeen, setMoviesSeen] = useState([]);
+
+  // Função para buscar todos os filmes ao carregar a página
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const filmes = await getAllFilmes(); // Função para buscar filmes
+        setMovies(filmes);
+      } catch (error) {
+        console.error("Erro ao buscar filmes:", error);
+      }
+    };
+
+    fetchMovies();
+  }, []); // Executa uma vez ao carregar a página
 
   const onMovieClick = (movieId) => {
     const updatedMovies = movies.filter((movie) => movie.id !== movieId);
@@ -39,9 +49,14 @@ function Home() {
     setMovies(updatedMovies);
   };
 
-  const onAddMovieSubmit = (title) => {
+  const onAddMovieSubmit = async (title) => {
     const newMovie = { id: v4(), title, inSeen: false };
-    setMovies([...movies, newMovie]);
+    try {
+      const addedMovie = await createFilme(newMovie, email); // Cria o filme usando a função fetch
+      setMovies([...movies, addedMovie]);
+    } catch (error) {
+      console.error("Erro ao adicionar filme:", error);
+    }
   };
 
   const onDeleteMovieClick = (movieId) => {
@@ -78,7 +93,7 @@ function Home() {
 
           <div
             id="listas"
-            className="w-full flex max-w-4xl mx-auto gap-6 mt-10 mb-20  justify-center"
+            className="w-full flex max-w-4xl mx-auto gap-6 mt-10 mb-20 justify-center"
           >
             <div className="w-full max-w-md">
               <Movies

@@ -10,7 +10,10 @@ export default [
     files: ["**/*.{js,jsx}"],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        process: "readonly", // Permite o uso de 'process' no código
+      },
       parserOptions: {
         ecmaVersion: "latest",
         ecmaFeatures: { jsx: true },
@@ -33,8 +36,8 @@ export default [
         "warn",
         { allowConstantExport: true },
       ],
-      "no-unused-vars": ["error", { varsIgnorePattern: "^React$" }], // Ignora React não usado
-      "react/react-in-jsx-scope": "off", // JSX Transform não exige React no escopo
+      "no-unused-vars": ["error", { varsIgnorePattern: "^React$" }],
+      "react/react-in-jsx-scope": "off",
     },
   },
 ];

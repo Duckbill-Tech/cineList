@@ -1,20 +1,19 @@
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { resetPassword } from "../../service/AuthService";
 
 function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [token, setToken] = useState("");
   const [feedback, setFeedback] = useState("");
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token"); // Obtém o token da URL
 
   // Função para redefinir a senha
   const handleResetPassword = async (event) => {
     event.preventDefault();
 
-    if (!newPassword.trim() || !confirmPassword.trim()) {
+    if (!newPassword.trim() || !confirmPassword.trim() || !token.trim()) {
       setFeedback("Por favor, preencha todos os campos.");
       return;
     }
@@ -43,6 +42,22 @@ function ResetPassword() {
       <div className="w-full max-w-md space-y-6 p-8">
         {/* Formulário de Redefinição de Senha */}
         <form onSubmit={handleResetPassword} className="space-y-4">
+          {/* Campo para o Token */}
+          <label htmlFor="token" className="sr-only">
+            Token
+          </label>
+          <input
+            id="token"
+            type="text"
+            placeholder="Cole aqui o token"
+            className="w-full px-4 py-3 rounded-md text-black"
+            value={token}
+            onChange={(event) => setToken(event.target.value)}
+            aria-required="true"
+            aria-label="Cole seu token aqui"
+          />
+
+          {/* Campo de Nova Senha */}
           <label htmlFor="newPassword" className="sr-only">
             Nova Senha
           </label>
@@ -57,6 +72,7 @@ function ResetPassword() {
             aria-label="Digite sua nova senha"
           />
 
+          {/* Campo de Confirmação de Senha */}
           <label htmlFor="confirmPassword" className="sr-only">
             Confirme a Senha
           </label>
@@ -71,6 +87,7 @@ function ResetPassword() {
             aria-label="Confirme sua nova senha"
           />
 
+          {/* Botão de Submissão */}
           <button
             type="submit"
             className="border border-amber-500 text-amber-500 px-4 py-2 rounded-md font-medium w-full"

@@ -1,13 +1,18 @@
 package com.duckbill.cine_list.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.duckbill.cine_list.dto.FilmeDTO;
 import com.duckbill.cine_list.service.FilmeService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,9 +23,29 @@ public class FilmeController {
     @Autowired
     private FilmeService filmeService;
 
+    private UUID getUsuarioIdFromToken(HttpServletRequest request) {
+        // Busca o token no cookie
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("authToken".equals(cookie.getName())) {
+                    try {
+                        // Decodifica o token e extrai o ID do usuário
+                        DecodedJWT decodedJWT = JWT.decode(cookie.getValue());
+                        return UUID.fromString(decodedJWT.getClaim("userId").asString());
+                    } catch (Exception e) {
+                        return null; // Retorna null se houver erro ao decodificar o token
+                    }
+                }
+            }
+        }
+        return null; // Retorna null se não encontrar o cookie ou o token estiver ausente
+    }
+
     // Endpoint para criar um novo filme
     @PostMapping
-    public ResponseEntity<FilmeDTO> createFilme(@RequestBody FilmeDTO filmeDTO, @RequestParam UUID usuarioId) {
+    public ResponseEntity<FilmeDTO> createFilme(@RequestBody FilmeDTO filmeDTO,  HttpServletRequest request) {
+        UUID usuarioId = getUsuarioIdFromToken(request);
         FilmeDTO createdFilme = filmeService.create(filmeDTO, usuarioId);
         return new ResponseEntity<>(createdFilme, HttpStatus.CREATED);
     }

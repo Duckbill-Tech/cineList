@@ -3,6 +3,7 @@ package com.duckbill.cine_list.infra.security;
 import com.duckbill.cine_list.db.repository.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // Recupera e valida o token JWT
-        String token = this.recoverToken(request);
+        String token = this.recoverTokenFromCookie(request);
         String email = (token != null) ? tokenService.validateToken(token) : null;
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -44,11 +45,16 @@ public class SecurityFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    // Metodo para extrair o token JWT do cabeçalho Authorization
-    private String recoverToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        return (authHeader != null && authHeader.startsWith("Bearer "))
-                ? authHeader.substring(7)
-                : null;
+    // Metodo para recuperar o token do cookie
+    private String recoverTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("authToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

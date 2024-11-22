@@ -7,14 +7,16 @@ export async function login(email, senha) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, senha }),
+      credentials: "include", // Permite que o cookie seja enviado junto com a requisição
     });
 
     if (!response.ok) {
       throw new Error("Error during login: " + response.statusText);
     }
 
-    const data = await response.json();
-    return data;
+    // Aqui, você pode remover a leitura do 'response' se não for necessário
+    // caso queira apenas indicar que o login foi bem-sucedido ou retornar um resultado
+    return await response.json(); // Ou retornar um status ou outra coisa, dependendo da sua necessidade
   } catch (error) {
     console.error("Error during login:", error);
     throw error;

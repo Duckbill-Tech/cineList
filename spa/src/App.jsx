@@ -4,7 +4,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Registro from "./pages/Registro";
 import RecuperarSenha from "./pages/RecuperarSenha";
-import ResetPassword from "./pages/ResetPassword";
+import RecuperarSenhaToken from "./pages/RecuperarSenhaToken";
 import Layout from "./components/Layout";
 import "./index.css";
 
@@ -81,7 +81,7 @@ function App() {
           path="/reset-password"
           element={
             <Layout>
-              <ResetPassword />
+              <RecuperarSenhaToken />
             </Layout>
           }
         />

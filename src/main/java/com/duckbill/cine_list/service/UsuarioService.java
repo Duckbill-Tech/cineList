@@ -6,7 +6,7 @@ import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
 import com.duckbill.cine_list.infra.security.TokenService;
 import com.duckbill.cine_list.mapper.UsuarioMapper;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +17,20 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final EmailService emailService;
+
+    @Autowired
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, TokenService tokenService, EmailService emailService) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenService = tokenService;
+        this.emailService = emailService;
+    }
 
     // Metodo para registrar um novo usuário e retornar o token
     public ResponseDTO register(UsuarioDTO usuarioDTO) {
@@ -47,14 +54,19 @@ public class UsuarioService {
     }
 
     public ResponseDTO login(String email, String senha) {
+        // Procurando o usuário no banco de dados
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("E-mail ou senha inválidos."));
 
+        // Verificando a senha
         if (!passwordEncoder.matches(senha, usuario.getSenha())) {
             throw new IllegalArgumentException("E-mail ou senha inválidos.");
         }
 
+        // Gerando o token
         String token = tokenService.generateToken(usuario);
+
+        // Retornando o ResponseDTO com nome do usuário e o token gerado
         return new ResponseDTO(usuario.getNome(), token);
     }
 

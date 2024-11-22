@@ -11,18 +11,18 @@ function Login() {
   // Função chamada quando o login for realizado
   const handleLogin = async (event) => {
     event.preventDefault(); // Impede o comportamento padrão do formulário
-
+  
     if (!email.trim() || !senha.trim()) {
       setFeedback("Campos obrigatórios!");
       return;
     }
-
+  
     try {
       // Chama a função de login do AuthService
-      const response = await login(email, senha);
+      await login(email, senha); // Apenas chama a função sem precisar armazenar o 'response'
 
       // Caso o login seja bem-sucedido, redireciona para a página inicial
-      navigate(`/home?token=${response.token}`);
+      navigate("/home");
     } catch (error) {
       // Define uma mensagem de erro no feedback
       setFeedback("Erro ao fazer login: Verifique suas credenciais.");

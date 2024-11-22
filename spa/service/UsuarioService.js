@@ -1,12 +1,13 @@
 // FETCH FOR CREATE A USER
 export async function createUsuario(usuarioDTO) {
   try {
-    const response = await fetch("/api/usuarios", {
+    const response = await fetch("http://localhost:8081/api/usuarios", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(usuarioDTO),
+      credentials: "include", // Adicionando credenciais (cookies)
     });
 
     if (!response.ok) {
@@ -24,8 +25,9 @@ export async function createUsuario(usuarioDTO) {
 // FETCH FOR GET USER BY ID
 export async function getUsuarioById(id) {
   try {
-    const response = await fetch(`/api/usuarios/${id}`, {
+    const response = await fetch(`http://localhost:8081/api/usuarios/${id}`, {
       method: "GET",
+      credentials: "include", // Adicionando credenciais (cookies)
     });
 
     if (!response.ok) {
@@ -43,8 +45,9 @@ export async function getUsuarioById(id) {
 // FETCH FOR GET ALL USERS
 export async function getAllUsuarios() {
   try {
-    const response = await fetch("/api/usuarios", {
+    const response = await fetch("http://localhost:8081/api/usuarios", {
       method: "GET",
+      credentials: "include", // Adicionando credenciais (cookies)
     });
 
     if (!response.ok) {
@@ -62,12 +65,13 @@ export async function getAllUsuarios() {
 // FETCH FOR UPDATE USER
 export async function updateUsuario(id, usuarioDTO) {
   try {
-    const response = await fetch(`/api/usuarios/${id}`, {
+    const response = await fetch(`http://localhost:8081/api/usuarios/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(usuarioDTO),
+      credentials: "include", // Adicionando credenciais (cookies)
     });
 
     if (!response.ok) {
@@ -87,6 +91,7 @@ export async function deleteUsuario(id) {
   try {
     const response = await fetch(`/api/usuarios/${id}`, {
       method: "DELETE",
+      credentials: "include", // Adicionando credenciais (cookies)
     });
 
     if (!response.ok) {
@@ -101,8 +106,9 @@ export async function deleteUsuario(id) {
 // FETCH FOR SUCCESS MESSAGE
 export async function getUserSuccess() {
   try {
-    const response = await fetch("/api/usuarios/user", {
+    const response = await fetch("http://localhost:8081/api/usuarios/user", {
       method: "GET",
+      credentials: "include", // Adicionando credenciais (cookies)
     });
 
     if (!response.ok) {

@@ -2,6 +2,8 @@ package com.duckbill.cine_list.controller;
 
 import com.duckbill.cine_list.dto.*;
 import com.duckbill.cine_list.service.UsuarioService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,13 +20,30 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO body) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO body, HttpServletResponse response) {
         try {
-            ResponseDTO response = usuarioService.login(body.email(), body.senha());
-            return ResponseEntity.ok(response);
+            // Realiza o login e gera o token
+            ResponseDTO responseDTO = usuarioService.login(body.email(), body.senha());
+
+            // Obtém o token JWT do ResponseDTO
+            String token = responseDTO.getToken(); // Aqui pegamos o token
+            System.out.println("Login realizado com sucesso: " + body.email());
+            System.out.println("Token gerado: " + token);
+
+            // Criação do cookie com o token JWT
+            Cookie cookie = new Cookie("authToken", token);
+            cookie.setHttpOnly(true); // Torna o cookie inacessível via JavaScript
+            cookie.setSecure(false);   // Define o cookie como seguro (se estiver em HTTPS)
+            cookie.setPath("/");      // Define o caminho para o qual o cookie será enviado
+            cookie.setMaxAge(3600);   // Define a expiração do cookie (1 hora)
+            response.addCookie(cookie); // Adiciona o cookie à resposta
+
+            return ResponseEntity.ok(responseDTO); // Retorna o ResponseDTO com a mensagem e o token
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace(); // Exibe o erro completo no console
             return ResponseEntity.status(500).body("Erro ao realizar login.");
         }
     }

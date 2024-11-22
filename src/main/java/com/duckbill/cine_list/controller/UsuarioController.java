@@ -66,7 +66,7 @@ public class UsuarioController {
             ResponseDTO response = usuarioService.update(id, usuarioDTO);
 
             // Loga os detalhes do usuário atualizado e o novo token
-            System.err.println("Usuário atualizado com sucesso: Nome = " + response.nome() + ", Novo Token = " + response.token());
+            // System.err.println("Usuário atualizado com sucesso: Nome = " + response.nome() + ", Novo Token = " + response.token());
 
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
