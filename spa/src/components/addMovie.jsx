@@ -1,24 +1,20 @@
 import { useState } from "react";
-import PropTypes from "prop-types";
-import { createFilme } from "../../service/FilmeService"; // Certifique-se de importar sua função de serviço
+import { createFilme } from "../../service/FilmeService";
 
-function AddMovie({ userEmail }) {
-  const [title, setTitle] = useState("");
+// eslint-disable-next-line react/prop-types
+function AddMovie({ userEmail, onAddMovieSubmit }) {
+  const [titulo, setTitulo] = useState("");
   const [feedback, setFeedback] = useState("");
 
   const handleAddMovie = async () => {
-    if (!title.trim()) {
+    if (!titulo.trim()) {
       setFeedback("Por favor, preencha o título do filme.");
       return;
     }
 
     try {
-      const usuarioId = userEmail; // Usa o email do usuário como ID
-      const filmeDTO = { titulo: title }; // Ajuste conforme o esperado pelo backend
-
-      // Chama a função createFilme que já faz o fetch para adicionar o filme
-      await createFilme(filmeDTO, usuarioId);
-      setTitle("");
+      await onAddMovieSubmit(titulo); // Use a função passada como prop
+      setTitulo(""); 
       setFeedback("Filme adicionado com sucesso!");
     } catch (error) {
       console.error("Erro ao adicionar filme:", error);
@@ -37,8 +33,8 @@ function AddMovie({ userEmail }) {
           type="text"
           placeholder="Digite o título do filme"
           className="flex-grow px-4 py-2 rounded-md text-black"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
+          value={titulo}
+          onChange={(event) => setTitulo(event.target.value)}
           aria-required="true"
           aria-label="Digite o título do filme"
         />
@@ -61,9 +57,5 @@ function AddMovie({ userEmail }) {
     </div>
   );
 }
-
-AddMovie.propTypes = {
-  userEmail: PropTypes.string.isRequired, // Recebe o email do usuário como prop
-};
 
 export default AddMovie;

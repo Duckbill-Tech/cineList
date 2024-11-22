@@ -7,7 +7,8 @@ import Movies from "../components/Movies";
 import MoviesSeen from "../components/MoviesSeen";
 import Katerine from "../components/Katerine";
 import Nathalie from "../components/Nathalie";
-import { getAllFilmes, createFilme } from "../../service/FilmeService"; // Adicione sua função de serviço
+import { getAllFilmes, createFilme }from "../../service/FilmeService";
+
 
 function Home() {
   useEffect(() => {
@@ -49,11 +50,17 @@ function Home() {
     setMovies(updatedMovies);
   };
 
-  const onAddMovieSubmit = async (title) => {
-    const newMovie = { id: v4(), title, inSeen: false };
+  const onAddMovieSubmit = async (titulo) => {
+    const authToken = localStorage.getItem("authToken");
+  
+    if (!authToken) {
+      console.error("Token de autenticação não encontrado!");
+      return;
+    }
+  
     try {
-      const addedMovie = await createFilme(newMovie, email); // Cria o filme usando a função fetch
-      setMovies([...movies, addedMovie]);
+      const newMovie = await createFilme({ titulo }, authToken);
+      setMovies((prevMovies) => [...prevMovies, newMovie]);
     } catch (error) {
       console.error("Erro ao adicionar filme:", error);
     }

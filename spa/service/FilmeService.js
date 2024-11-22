@@ -19,12 +19,13 @@ export async function getAllFilmes() {
 }
 
 // FETCH FOR CREATE A FILME
-export async function createFilme(filmeDTO, usuarioId) {
+export async function createFilme(filmeDTO, authToken) {
   try {
-    const response = await fetch(`http://localhost:8081/api/filmes?usuarioId=${usuarioId}`, {
+    const response = await fetch(`http://localhost:8081/api/filmes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`, // Adicione o token de autenticação aqui
       },
       body: JSON.stringify(filmeDTO),
       credentials: "include", 
