@@ -89,6 +89,4 @@ class AuthControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         verify(usuarioService, times(1)).register(any());
     }
-
-    // TESTE PARA ENVIO DE UM EMAIL DE RECUPERAÇÃO
 }

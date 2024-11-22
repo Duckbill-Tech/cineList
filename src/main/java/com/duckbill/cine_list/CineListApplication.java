@@ -4,21 +4,21 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "com.duckbill.cine_list")
+@SpringBootApplication
 public class CineListApplication {
 
 	public static void main(String[] args) {
-		// Carregar as variáveis do .env, ignorando se o arquivo não estiver presente
+		// Carregar as variáveis do .env, se disponível
 		Dotenv dotenv = Dotenv.configure()
-				.ignoreIfMissing()
+				.ignoreIfMissing() // Ignora se o arquivo .env não estiver presente
 				.load();
 
-		// Carregar as variáveis do .env no System Properties (se ainda não estiverem definidas)
-		dotenv.entries().forEach(entry -> {
-			if (System.getProperty(entry.getKey()) == null) {
-				System.setProperty(entry.getKey(), entry.getValue());
-			}
-		});
+		// Configurar as variáveis do .env no System Properties, sem sobrescrever existentes
+		dotenv.entries().stream()
+				.filter(entry -> System.getProperty(entry.getKey()) == null) // Evita sobrescrever variáveis existentes
+				.forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+
+		// Inicializar a aplicação Spring Boot
 		SpringApplication.run(CineListApplication.class, args);
 	}
 }

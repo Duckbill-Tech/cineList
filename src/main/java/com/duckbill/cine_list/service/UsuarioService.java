@@ -6,8 +6,7 @@ import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
 import com.duckbill.cine_list.infra.security.TokenService;
 import com.duckbill.cine_list.mapper.UsuarioMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,52 +17,35 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UsuarioService {
 
-    @Autowired
     private final UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
+    private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
     private final EmailService emailService;
-
-    public UsuarioService(UsuarioRepository usuarioRepository, EmailService emailService) {
-        this.usuarioRepository = usuarioRepository;
-        this.emailService = emailService;
-    }
 
     // Metodo para registrar um novo usuário e retornar o token
     public ResponseDTO register(UsuarioDTO usuarioDTO) {
-        // Verifica se o e-mail já existe no banco de dados
         if (usuarioRepository.findByEmail(usuarioDTO.getEmail()).isPresent()) {
             throw new IllegalArgumentException("E-mail já está em uso.");
         }
 
-        // Valida CPF
         if (!isValidCPF(usuarioDTO.getCpf())) {
             throw new IllegalArgumentException("CPF inválido.");
         }
 
-        // Converte o DTO para a entidade e salva no banco
         Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
         usuario.setId(UUID.randomUUID());
         usuario.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
 
         Usuario savedUsuario = usuarioRepository.save(usuario);
 
-        // Gera o token para o novo usuário
         String token = tokenService.generateToken(savedUsuario);
 
-        // Retorna o nome e o token no ResponseDTO
         return new ResponseDTO(savedUsuario.getNome(), token);
     }
 
-    // Metodo para autenticar um usuário e gerar o token
     public ResponseDTO login(String email, String senha) {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("E-mail ou senha inválidos."));
@@ -76,30 +58,24 @@ public class UsuarioService {
         return new ResponseDTO(usuario.getNome(), token);
     }
 
-    // Metodo para criar um novo usuário sem gerar token
     public UsuarioDTO create(UsuarioDTO usuarioDTO) {
         Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
         usuario.setId(UUID.randomUUID());
 
-        // Valida CPF
         if (!isValidCPF(usuario.getCpf())) {
             throw new IllegalArgumentException("CPF inválido");
         }
 
-        // Criptografa a senha antes de salvar
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-
         Usuario savedUsuario = usuarioRepository.save(usuario);
         return UsuarioMapper.toDto(savedUsuario);
     }
 
-    // Metodo para buscar um usuário pelo ID
     public Optional<UsuarioDTO> getById(UUID id) {
         return usuarioRepository.findById(id)
                 .map(UsuarioMapper::toDto);
     }
 
-    // Metodo para listar todos os usuários
     public List<UsuarioDTO> getAll() {
         return usuarioRepository.findAll()
                 .stream()
@@ -107,11 +83,9 @@ public class UsuarioService {
                 .collect(Collectors.toList());
     }
 
-    // Metodo para atualizar um usuário existente
     public ResponseDTO update(UUID id, UsuarioDTO usuarioDTO) {
         return usuarioRepository.findById(id)
                 .map(usuario -> {
-                    // Atualiza os dados do usuário
                     usuario.setNome(usuarioDTO.getNome());
                     usuario.setEmail(usuarioDTO.getEmail());
                     usuario.setCpf(usuarioDTO.getCpf());
@@ -122,17 +96,13 @@ public class UsuarioService {
 
                     usuario.setUpdatedAt(LocalDateTime.now());
                     Usuario updatedUsuario = usuarioRepository.save(usuario);
-
-                    // Gera um novo token para o usuário atualizado
                     String newToken = tokenService.generateToken(updatedUsuario);
 
-                    // Retorna o nome do usuário e o novo token
                     return new ResponseDTO(updatedUsuario.getNome(), newToken);
                 })
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
-    // Metodo para deletar logicamente um usuário
     public void delete(UUID id) {
         usuarioRepository.findById(id).ifPresent(usuario -> {
             usuario.setDeletedAt(LocalDateTime.now());
@@ -140,7 +110,39 @@ public class UsuarioService {
         });
     }
 
-    // Validação de CPF simplificada
+    public String generateAndSendPasswordResetToken(String email) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
+
+        if (optionalUsuario.isEmpty()) {
+            return null; // Email não encontrado
+        }
+
+        Usuario usuario = optionalUsuario.get();
+        String token = UUID.randomUUID().toString(); // Gera token automaticamente com UUID
+        usuario.setPasswordResetToken(token);
+        usuario.setTokenExpirationTime(LocalDateTime.now().plusHours(1));
+
+        usuarioRepository.save(usuario);
+        emailService.sendPasswordResetEmail(email, token);
+        return token;
+    }
+
+    public boolean resetPasswordWithToken(String token, String newPassword) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByPasswordResetToken(token);
+        if (optionalUsuario.isPresent()) {
+            Usuario usuario = optionalUsuario.get();
+            if (usuario.getTokenExpirationTime() != null && usuario.getTokenExpirationTime().isBefore(LocalDateTime.now())) {
+                return false; // Token expirado
+            }
+            usuario.setSenha(passwordEncoder.encode(newPassword));
+            usuario.setPasswordResetToken(null);
+            usuario.setTokenExpirationTime(null);
+            usuarioRepository.save(usuario);
+            return true;
+        }
+        return false;
+    }
+
     private boolean isValidCPF(String cpf) {
         String cpfClean = cpf.replaceAll("\\D", "");
 
@@ -163,54 +165,5 @@ public class UsuarioService {
         }
         int resto = 11 - (soma % 11);
         return (resto > 9) ? 0 : resto;
-    }
-
-    /**
-     * Gera um token de redefinição de senha e envia para o email do usuário.
-     *
-     * @param email O email do usuário.
-     * @return true se o email foi enviado com sucesso; false caso contrário.
-     */
-    public String generateAndSendPasswordResetToken(String email) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
-
-        // Verifica se o usuário existe
-        if (optionalUsuario.isEmpty()) {
-            return null; // Email não encontrado
-        }
-
-        Usuario usuario = optionalUsuario.get();
-
-        // Gera um token único e define a expiração para 1 hora
-        String token = UUID.randomUUID().toString();
-        usuario.setPasswordResetToken(token);
-        usuario.setTokenExpirationTime(LocalDateTime.now().plusHours(1));
-
-        // Salva o token e a expiração no banco de dados
-        usuarioRepository.save(usuario);
-
-        // Envia o email de redefinição de senha
-        emailService.sendPasswordResetEmail(email, token);
-
-        // Retorna o token gerado
-        return token;
-    }
-
-    // Redefine a senha usando o token
-
-    public boolean resetPasswordWithToken(String token, String newPassword) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findByPasswordResetToken(token);
-        if (optionalUsuario.isPresent()) {
-            Usuario usuario = optionalUsuario.get();
-            if (usuario.getTokenExpirationTime() != null && usuario.getTokenExpirationTime().isBefore(LocalDateTime.now())) {
-                return false; // Token expirado
-            }
-            usuario.setSenha(new BCryptPasswordEncoder().encode(newPassword));
-            usuario.setPasswordResetToken(null);
-            usuario.setTokenExpirationTime(null);
-            usuarioRepository.save(usuario);
-            return true;
-        }
-        return false;
     }
 }

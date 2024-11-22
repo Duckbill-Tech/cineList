@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -113,11 +114,18 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body("E-mail é obrigatório.");
         }
 
-        try {
-            usuarioService.generateAndSendPasswordResetToken(email);
-            return ResponseEntity.ok("Instruções de recuperação de senha enviadas.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        String token = usuarioService.generateAndSendPasswordResetToken(email);
+
+        // Retorno para desenvolvimento e testes
+        if (token == null) {
+            return ResponseEntity.ok(Map.of(
+                    "message", "Se o e-mail existir em nossa base, as instruções de recuperação foram enviadas."
+            ));
         }
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Se o e-mail existir em nossa base, as instruções de recuperação foram enviadas.",
+                "token", token
+        ));
     }
 }
