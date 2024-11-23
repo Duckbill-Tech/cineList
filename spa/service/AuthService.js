@@ -1,4 +1,4 @@
-// FETCH FOR LOGIN
+// FETCH PARA LOGIN
 export async function login(email, senha) {
   try {
     const response = await fetch("http://localhost:8081/auth/login", {
@@ -7,23 +7,22 @@ export async function login(email, senha) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, senha }),
-      credentials: "include", // Permite que o cookie seja enviado junto com a requisição
+      credentials: "include", // Adicionando credenciais (cookies)
     });
 
     if (!response.ok) {
-      throw new Error("Error during login: " + response.statusText);
+      throw new Error("Erro ao fazer login: " + response.statusText);
     }
 
-    // Aqui, você pode remover a leitura do 'response' se não for necessário
-    // caso queira apenas indicar que o login foi bem-sucedido ou retornar um resultado
-    return await response.json(); // Ou retornar um status ou outra coisa, dependendo da sua necessidade
+    const data = await response.json();
+    return data;
+
   } catch (error) {
-    console.error("Error during login:", error);
-    throw error;
+    console.error("Erro ao fazer login:", error);
   }
 }
 
-// FETCH FOR REGISTER
+// FETCH PARA REGISTER
 export async function register(nome, email, cpf, senha) {
   try {
     const response = await fetch("http://localhost:8081/auth/register", { 
@@ -32,36 +31,41 @@ export async function register(nome, email, cpf, senha) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ nome, email, cpf, senha }),
+      credentials: "include",
     });
 
     if (!response.ok) {
-      throw new Error("Error during register: " + response.statusText);
+      throw new Error("Erro durante o registro: " + response.statusText);
     }
 
     const data = await response.json();
     return data;
+    
   } catch (error) {
-    console.error("Error during register:", error);
-    throw error;
+    console.error("Erro ao fazer login:", error);
   }
 }
 
-// FETCH FOR RESET PASSWORD
-export async function resetPassword(token, newPassword) {
+
+// FETCH PARA RESET PASSWORD
+export async function resetPassword(newPassword) {
   try {
-    const response = await fetch(`/auth/reset-password?token=${token}`, {
+    const response = await fetch(`http://localhost:8081/auth/reset-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ newPassword }),
+      credentials: "include",
     });
 
     if (!response.ok) {
       throw new Error("Erro ao redefinir senha: " + response.statusText);
     }
 
-    return await response.json();
+    const data = await response.json();
+    return data;
+    
   } catch (error) {
     console.error("Erro ao redefinir senha:", error);
     throw error;

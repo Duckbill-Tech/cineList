@@ -1,4 +1,4 @@
-// FETCH FOR CREATE A USER
+// FETCH PARA CREATE A USER
 export async function createUsuario(usuarioDTO) {
   try {
     const response = await fetch("http://localhost:8081/api/usuarios", {
@@ -11,13 +11,13 @@ export async function createUsuario(usuarioDTO) {
     });
 
     if (!response.ok) {
-      throw new Error("Error creating usuario: " + response.statusText);
+      throw new Error("Erro em criando usuario: " + response.statusText);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error creating usuario:", error);
+    console.error("Erro em criando usuario:", error);
     throw error;
   }
 }
@@ -27,17 +27,17 @@ export async function getUsuarioById(id) {
   try {
     const response = await fetch(`http://localhost:8081/api/usuarios/${id}`, {
       method: "GET",
-      credentials: "include", // Adicionando credenciais (cookies)
+      credentials: "include",
     });
 
     if (!response.ok) {
-      throw new Error("Error fetching usuario: " + response.statusText);
+      throw new Error("Erro pegar usuario por id: " + response.statusText);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching usuario:", error);
+    console.error("Erro pegar usuario por id:", error);
     throw error;
   }
 }
@@ -47,17 +47,17 @@ export async function getAllUsuarios() {
   try {
     const response = await fetch("http://localhost:8081/api/usuarios", {
       method: "GET",
-      credentials: "include", // Adicionando credenciais (cookies)
+      credentials: "include",
     });
 
     if (!response.ok) {
-      throw new Error("Error fetching usuarios: " + response.statusText);
+      throw new Error("Erro em pegar todos usuarios: " + response.statusText);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching usuarios:", error);
+    console.error("Erro em pegar todos usuarios:", error);
     throw error;
   }
 }
@@ -71,17 +71,17 @@ export async function updateUsuario(id, usuarioDTO) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(usuarioDTO),
-      credentials: "include", // Adicionando credenciais (cookies)
+      credentials: "include",
     });
 
     if (!response.ok) {
-      throw new Error("Error updating usuario: " + response.statusText);
+      throw new Error("Erro em update usuario:" + response.statusText);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error updating usuario:", error);
+    console.error("Erro em update usuario:", error);
     throw error;
   }
 }
@@ -91,14 +91,15 @@ export async function deleteUsuario(id) {
   try {
     const response = await fetch(`/api/usuarios/${id}`, {
       method: "DELETE",
-      credentials: "include", // Adicionando credenciais (cookies)
+      credentials: "include",
     });
 
     if (!response.ok) {
-      throw new Error("Error deleting usuario: " + response.statusText);
+      throw new Error("Erro em delete usuario: " + response.statusText);
     }
+
   } catch (error) {
-    console.error("Error deleting usuario:", error);
+    console.error("Erro em delete usuario:", error);
     throw error;
   }
 }
@@ -108,17 +109,17 @@ export async function getUserSuccess() {
   try {
     const response = await fetch("http://localhost:8081/api/usuarios/user", {
       method: "GET",
-      credentials: "include", // Adicionando credenciais (cookies)
+      credentials: "include"
     });
 
     if (!response.ok) {
-      throw new Error("Error fetching success message: " + response.statusText);
+      throw new Error("Erro em verificar token usuario:" + response.statusText);
     }
 
     const data = await response.text();
     return data;
   } catch (error) {
-    console.error("Error fetching success message:", error);
+    console.error("Erro em verificar token usuario:", error);
     throw error;
   }
 }

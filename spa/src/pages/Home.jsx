@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { v4 } from "uuid";
 import { useSearchParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import AddMovie from "../components/AddMovie";

@@ -47,17 +47,12 @@ public class SecurityConfig {
                         // Permissões para UsuarioController
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // Criar usuário
                         .requestMatchers(HttpMethod.GET, "/api/usuarios").permitAll() // Listar usuários
-                        .requestMatchers(HttpMethod.GET, "/api/usuarios/{id}").authenticated() // Buscar por ID
-                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/{id}").authenticated() // Atualizar por ID
-                        .requestMatchers(HttpMethod.DELETE, "/api/usuarios/{id}").authenticated() // Deletar logicamente
                         .requestMatchers(HttpMethod.GET, "/api/usuarios/user").hasAuthority("ROLE_USER") // Requer ROLE_USER
 
                         // Permissões para FilmeController
-                        .requestMatchers(HttpMethod.POST, "/api/filmes").authenticated() // Criar filme
                         .requestMatchers(HttpMethod.GET, "/api/filmes").permitAll() // Listar filmes
                         .requestMatchers(HttpMethod.GET, "/api/filmes/{id}").permitAll() // Buscar filme por ID
-                        .requestMatchers(HttpMethod.PUT, "/api/filmes/{id}").authenticated() // Atualizar filme por ID
-                        .requestMatchers(HttpMethod.DELETE, "/api/filmes/{id}").authenticated() // Deletar logicamente
+
 
                         // Permissões abertas para Swagger e documentação
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
@@ -65,7 +60,7 @@ public class SecurityConfig {
                         // Permissões para Reset Password
                         .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
-                        .requestMatchers("/reset-password", "/forgot-password").permitAll() // Permite o acesso sem autenticação
+                        .requestMatchers("/reset-password", "/forgot-password").permitAll()
                         .requestMatchers("/error", "/error/**").permitAll()
 
                         // Qualquer outra requisição precisa de autenticação
