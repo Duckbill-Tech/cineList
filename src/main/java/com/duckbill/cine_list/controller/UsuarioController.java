@@ -95,39 +95,6 @@ public class UsuarioController {
         return ResponseEntity.ok("sucesso!");
     }
 
-    // Endpoint para retornar o email
-    @GetMapping("/me")
-    public ResponseEntity<UsuarioDTO> getCurrentUser(HttpServletRequest request) {
-        String token = getTokenFromCookie(request);
-        if (token == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        try {
-            // Decodificar o token para obter o e-mail
-            String email = tokenService.validateToken(token);
-
-            if (email == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-            Optional<UsuarioDTO> usuario = usuarioService.getByEmail(email);
-            return usuario.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    // Metodo auxiliar para recuperar o token JWT do cookie
-    private String getTokenFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("authToken".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
 
     // TODO
 //    // Endpoint para resetar a senha

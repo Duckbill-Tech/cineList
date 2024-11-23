@@ -20,7 +20,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO body, HttpServletResponse response) {
         try {
-            ResponseDTO responseDTO = usuarioService.login(body.email(), body.senha());
+            LoginResponseDTO responseDTO = usuarioService.login(body.email(), body.senha());
 
             String token = responseDTO.getToken();
 

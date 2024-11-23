@@ -2,6 +2,7 @@ package com.duckbill.cine_list.service;
 
 import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.db.repository.UsuarioRepository;
+import com.duckbill.cine_list.dto.LoginResponseDTO;
 import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
 import com.duckbill.cine_list.infra.security.TokenService;
@@ -54,7 +55,7 @@ public class UsuarioService {
     }
 
     // Metodo para Login do usuário
-    public ResponseDTO login(String email, String senha) {
+    public LoginResponseDTO login(String email, String senha) {
         // Procurando o usuário no banco de dados
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("E-mail ou senha inválidos."));
@@ -68,7 +69,7 @@ public class UsuarioService {
         String token = tokenService.generateToken(usuario);
 
         // Retornando o ResponseDTO com nome do usuário e o token gerado
-        return new ResponseDTO(usuario.getNome(), token);
+        return new LoginResponseDTO(usuario.getNome(), usuario.getEmail(), token);
     }
 
     // Metodo para pega criar usuario (sem token)

@@ -3,9 +3,7 @@ package com.duckbill.cine_list.dto;
 public class ResponseDTO {
     private String message;
     private String token;
-
-    public ResponseDTO() {}
-
+    
     public ResponseDTO(String message, String token) {
         this.message = message;
         this.token = token;

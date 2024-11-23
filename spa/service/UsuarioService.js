@@ -125,7 +125,7 @@ export async function getUserSuccess() {
 }
 
 // FETCH PARA OBTER O USUÁRIO ATUAL
-export async function getCurrentUser() {
+export async function getUsuarioAtual() {
   try {
     const response = await fetch("http://localhost:8081/api/usuarios/me", {
       method: "GET",
