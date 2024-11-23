@@ -50,15 +50,8 @@ function Home() {
   };
 
   const onAddMovieSubmit = async (titulo) => {
-    const authToken = localStorage.getItem("authToken");
-  
-    if (!authToken) {
-      console.error("Token de autenticação não encontrado!");
-      return;
-    }
-  
     try {
-      const newMovie = await createFilme({ titulo }, authToken);
+      const newMovie = await createFilme({ titulo });
       setMovies((prevMovies) => [...prevMovies, newMovie]);
     } catch (error) {
       console.error("Erro ao adicionar filme:", error);

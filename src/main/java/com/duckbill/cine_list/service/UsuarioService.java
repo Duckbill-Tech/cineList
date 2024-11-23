@@ -122,39 +122,6 @@ public class UsuarioService {
         });
     }
 
-    public String generateAndSendPasswordResetToken(String email) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
-
-        if (optionalUsuario.isEmpty()) {
-            return null; // Email não encontrado
-        }
-
-        Usuario usuario = optionalUsuario.get();
-        String token = UUID.randomUUID().toString(); // Gera token automaticamente com UUID
-        usuario.setPasswordResetToken(token);
-        usuario.setTokenExpirationTime(LocalDateTime.now().plusHours(1));
-
-        usuarioRepository.save(usuario);
-        emailService.sendPasswordResetEmail(email, token);
-        return token;
-    }
-
-    public boolean resetPasswordWithToken(String token, String newPassword) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findByPasswordResetToken(token);
-        if (optionalUsuario.isPresent()) {
-            Usuario usuario = optionalUsuario.get();
-            if (usuario.getTokenExpirationTime() != null && usuario.getTokenExpirationTime().isBefore(LocalDateTime.now())) {
-                return false; // Token expirado
-            }
-            usuario.setSenha(passwordEncoder.encode(newPassword));
-            usuario.setPasswordResetToken(null);
-            usuario.setTokenExpirationTime(null);
-            usuarioRepository.save(usuario);
-            return true;
-        }
-        return false;
-    }
-
     private boolean isValidCPF(String cpf) {
         String cpfClean = cpf.replaceAll("\\D", "");
 
@@ -178,4 +145,39 @@ public class UsuarioService {
         int resto = 11 - (soma % 11);
         return (resto > 9) ? 0 : resto;
     }
+
+    // TODO
+//    public String generateAndSendPasswordResetToken(String email) {
+//        Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
+//
+//        if (optionalUsuario.isEmpty()) {
+//            return null; // Email não encontrado
+//        }
+//
+//        Usuario usuario = optionalUsuario.get();
+//        String token = UUID.randomUUID().toString(); // Gera token automaticamente com UUID
+//        usuario.setPasswordResetToken(token);
+//        usuario.setTokenExpirationTime(LocalDateTime.now().plusHours(1));
+//
+//        usuarioRepository.save(usuario);
+//        emailService.sendPasswordResetEmail(email, token);
+//        return token;
+//    }
+//
+//    public boolean resetPasswordWithToken(String token, String newPassword) {
+//        Optional<Usuario> optionalUsuario = usuarioRepository.findByPasswordResetToken(token);
+//        if (optionalUsuario.isPresent()) {
+//            Usuario usuario = optionalUsuario.get();
+//            if (usuario.getTokenExpirationTime() != null && usuario.getTokenExpirationTime().isBefore(LocalDateTime.now())) {
+//                return false; // Token expirado
+//            }
+//            usuario.setSenha(passwordEncoder.encode(newPassword));
+//            usuario.setPasswordResetToken(null);
+//            usuario.setTokenExpirationTime(null);
+//            usuarioRepository.save(usuario);
+//            return true;
+//        }
+//        return false;
+//    }
+
 }

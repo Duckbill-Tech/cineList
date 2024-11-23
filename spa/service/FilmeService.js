@@ -1,3 +1,28 @@
+// FETCH PARA CRIAR UM FILME
+export async function createFilme(filmeDTO) {
+  try {
+    const response = await fetch(`http://localhost:8081/api/filmes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(filmeDTO),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro em adicionando o filme: " + response.statusText);
+    }
+
+    const data = await response.json();
+    console.debug("Resposta Servidor:", data);
+    return data;
+  } catch (error) {
+    console.error("Erro em adicionando o filme:", error);
+    throw error;
+  }
+}
+
 // FETCH PARA PEGAR TODOS OS FILMES
 export async function getAllFilmes() {
   try {
@@ -14,31 +39,6 @@ export async function getAllFilmes() {
     return data;
   } catch (error) {
     console.error("Erro em pegar todos os filmes:", error);
-    throw error;
-  }
-}
-
-// FETCH PARA CRIAR UM FILME
-export async function createFilme(filmeDTO) {
-  try {
-    const response = await fetch(`http://localhost:8081/api/filmes`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(filmeDTO),
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      throw new Error("Erro criando o filme: " + response.statusText);
-    }
-
-    const data = await response.json();
-    console.debug("Resposta Servidor:", data);
-    return data;
-  } catch (error) {
-    console.error("Erro criando o filme:", error);
     throw error;
   }
 }
