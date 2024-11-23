@@ -73,41 +73,41 @@ public class AuthController {
     }
     // TODO
     // Esqueci minha senha (gera e envia token)
-    @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody String email) {
-        if (email == null || email.isEmpty()) {
-            return ResponseEntity.badRequest().body("E-mail é obrigatório.");
-        }
-
-        String token = usuarioService.generateAndSendPasswordResetToken(email);
-
-        if (token == null) {
-            // Retorna mensagem genérica para não expor a existência ou não do e-mail no sistema
-            return ResponseEntity.ok("Se o e-mail existir em nossa base, as instruções de recuperação foram enviadas.");
-        }
-
-        // Opcional: Retornar o token para desenvolvimento ou debug
-        return ResponseEntity.ok(Map.of(
-                "message", "Se o e-mail existir em nossa base, as instruções de recuperação foram enviadas.",
-                "token", token
-        ));
-    }
-
-    // Redefinir senha
-    @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> payload) {
-        String token = payload.get("token");
-        String newPassword = payload.get("newPassword");
-
-        if (newPassword == null || newPassword.isEmpty()) {
-            return ResponseEntity.badRequest().body("A nova senha é obrigatória.");
-        }
-
-        boolean resetSuccess = usuarioService.resetPasswordWithToken(token, newPassword);
-        if (resetSuccess) {
-            return ResponseEntity.ok("Senha redefinida com sucesso.");
-        } else {
-            return ResponseEntity.badRequest().body("Token inválido ou expirado.");
-        }
-    }
+//    @PostMapping("/forgot-password")
+//    public ResponseEntity<?> forgotPassword(@RequestBody String email) {
+//        if (email == null || email.isEmpty()) {
+//            return ResponseEntity.badRequest().body("E-mail é obrigatório.");
+//        }
+//
+//        String token = usuarioService.generateAndSendPasswordResetToken(email);
+//
+//        if (token == null) {
+//            // Retorna mensagem genérica para não expor a existência ou não do e-mail no sistema
+//            return ResponseEntity.ok("Se o e-mail existir em nossa base, as instruções de recuperação foram enviadas.");
+//        }
+//
+//        // Opcional: Retornar o token para desenvolvimento ou debug
+//        return ResponseEntity.ok(Map.of(
+//                "message", "Se o e-mail existir em nossa base, as instruções de recuperação foram enviadas.",
+//                "token", token
+//        ));
+//    }
+//
+//    // Redefinir senha
+//    @PostMapping("/reset-password")
+//    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> payload) {
+//        String token = payload.get("token");
+//        String newPassword = payload.get("newPassword");
+//
+//        if (newPassword == null || newPassword.isEmpty()) {
+//            return ResponseEntity.badRequest().body("A nova senha é obrigatória.");
+//        }
+//
+//        boolean resetSuccess = usuarioService.resetPasswordWithToken(token, newPassword);
+//        if (resetSuccess) {
+//            return ResponseEntity.ok("Senha redefinida com sucesso.");
+//        } else {
+//            return ResponseEntity.badRequest().body("Token inválido ou expirado.");
+//        }
+//    }
 }
