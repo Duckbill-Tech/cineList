@@ -12,7 +12,7 @@ function Registro() {
 
   // Função chamada quando o cadastro for realizado
   const handleCadastro = async (event) => {
-    event.preventDefault(); // Previne o comportamento padrão do formulário
+    event.preventDefault(); 
 
     if (!CPF.trim() || !nome.trim() || !email.trim() || !senha.trim()) {
       setFeedback("Por favor, preencha todos os campos obrigatórios.");
@@ -30,7 +30,6 @@ function Registro() {
       setEmail("");
       setSenha("");
 
-      // Redireciona para a página de login após o cadastro
       setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
       console.error("Erro ao realizar cadastro:", error);
