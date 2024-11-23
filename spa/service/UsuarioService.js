@@ -123,23 +123,3 @@ export async function getUserSuccess() {
     throw error;
   }
 }
-
-// FETCH PARA OBTER O USUÁRIO ATUAL
-export async function getUsuarioAtual() {
-  try {
-    const response = await fetch("http://localhost:8081/api/usuarios/me", {
-      method: "GET",
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      throw new Error("Erro ao obter usuário atual: " + response.statusText);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Erro ao obter usuário atual:", error);
-    throw error;
-  }
-}

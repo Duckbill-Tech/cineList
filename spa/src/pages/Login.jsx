@@ -4,45 +4,40 @@ import { login } from "../../service/AuthService";
 
 function Login() {
   const [email, setEmail] = useState("");
+  const [nome, setNome] = useState("");
   const [senha, setSenha] = useState("");
   const [feedback, setFeedback] = useState("");
   const navigate = useNavigate();
 
   // Função chamada quando o login for realizado
   const handleLogin = async (event) => {
-    event.preventDefault(); // Impede o comportamento padrão do formulário
-  
+    event.preventDefault();
     if (!email.trim() || !senha.trim()) {
       setFeedback("Campos obrigatórios!");
       return;
     }
-  
     try {
-      // Chama a função de login do AuthService
-      await login(email, senha); // Apenas chama a função sem precisar armazenar o 'response'
-
+      const {emailUsuario, nomeUsuario} =  await login(email, senha);
+      setEmail(emailUsuario);
+      setNome(nomeUsuario);
       // Caso o login seja bem-sucedido, redireciona para a página inicial
-      navigate("/home");
+      navigate(`/home?nome=${nomeUsuario}&email=${emailUsuario}`);
+      localStorage.setItem('nome', nome);
+      localStorage.setItem('email', email);
     } catch (error) {
-      // Define uma mensagem de erro no feedback
       setFeedback("Erro ao fazer login: Verifique suas credenciais.");
       console.error(error);
-    } finally {
-      // Limpa os campos após o login
-      setEmail("");
-      setSenha("");
-    }
+    } 
+  };
+    const onRegisterButton = () => {
+    navigate("/registro");
   };
 
-  // Função para redirecionar para a página de registro
-  const onRegisterButton = () => {
-    navigate("/registro"); // Navega para a página de registro
-  };
 
-  // Função para redirecionar para a página de recuperação de senha
-  const onForgotPassword = () => {
-    navigate("/recuperar-senha"); // Navega para a página de recuperação de senha
-  };
+  // TODO:
+  // const onForgotPassword = () => {
+  //   navigate("/recuperar-senha");
+  // };
 
   return (
     <div className="w-full bg-black flex justify-center items-center flex-grow py-10">
@@ -103,13 +98,13 @@ function Login() {
               Ainda não sou cadastrada/o
             </button>
 
-            <button
+            {/* <button
               type="button"
               onClick={onForgotPassword}
               className="text-sm text-amber-500 self-center"
             >
               Esqueci minha senha
-            </button>
+            </button> */}
           </div>
         </form>
       </div>

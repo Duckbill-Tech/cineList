@@ -6,7 +6,6 @@ import MoviesSeen from "../components/MoviesSeen";
 import Katerine from "../components/Katerine";
 import Nathalie from "../components/Nathalie";
 import { getAllFilmes, createFilme } from "../../service/FilmeService";
-import { getCurrentUser } from "../../service/UsuarioService";
 
 function Home() {
   // Adiciona classes ao body ao montar o componente
