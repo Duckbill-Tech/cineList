@@ -26,7 +26,6 @@ public class UsuarioDTO {
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
-    // Construtores, Getters e Setters
     public UsuarioDTO() {
     }
 

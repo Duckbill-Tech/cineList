@@ -19,11 +19,11 @@ public class FilmeDTO {
     private LocalDateTime deletedAt;
     private UUID createdById;
 
-    // Construtor padrão
+
     public FilmeDTO() {
     }
 
-    // Construtor com todos os parâmetros
+
     public FilmeDTO(UUID id, String titulo, String descricao, Double nota, LocalDateTime updatedAt, LocalDateTime completedAt, LocalDateTime deletedAt, UUID createdById) {
         this.id = id;
         this.titulo = titulo;

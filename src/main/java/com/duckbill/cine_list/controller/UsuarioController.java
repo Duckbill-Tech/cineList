@@ -1,5 +1,6 @@
 package com.duckbill.cine_list.controller;
 
+import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
 import com.duckbill.cine_list.service.UsuarioService;
@@ -8,9 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,15 +27,15 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<UsuarioDTO> createUsuario(@RequestBody UsuarioDTO usuarioDTO) {
         try {
-            System.out.println("Recebendo usuarioDTO: " + usuarioDTO); // Log para verificar o objeto recebido
+            System.out.println("Recebendo usuarioDTO: " + usuarioDTO);
             UsuarioDTO createdUsuario = usuarioService.create(usuarioDTO);
-            System.out.println("Usuario criado com sucesso: " + createdUsuario); // Log após criação
+            System.out.println("Usuario criado com sucesso: " + createdUsuario);
             return new ResponseEntity<>(createdUsuario, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            System.err.println("Erro de validação: " + e.getMessage()); // Log para erros de validação
+            System.err.println("Erro de validação: " + e.getMessage());
             return ResponseEntity.badRequest().body(null);
         } catch (Exception e) {
-            System.err.println("Erro inesperado: " + e.getMessage()); // Log para outros erros
+            System.err.println("Erro inesperado: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -56,7 +58,7 @@ public class UsuarioController {
     // Endpoint para atualizar um usuário por ID
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO> updateUsuario(@PathVariable UUID id, @RequestBody UsuarioDTO usuarioDTO) {
-        System.err.println("Iniciando atualização de usuário com ID: " + id);  // Loga o ID recebido
+        System.err.println("Iniciando atualização de usuário com ID: " + id);
 
         // Loga os detalhes do payload recebido
         System.err.println("Payload recebido para atualização: Nome = " + usuarioDTO.getNome() + ", Email = " + usuarioDTO.getEmail() + ", CPF = " + usuarioDTO.getCpf());
@@ -65,12 +67,9 @@ public class UsuarioController {
             // Atualiza o usuário e gera um novo token
             ResponseDTO response = usuarioService.update(id, usuarioDTO);
 
-            // Loga os detalhes do usuário atualizado e o novo token
-            // System.err.println("Usuário atualizado com sucesso: Nome = " + response.nome() + ", Novo Token = " + response.token());
-
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            System.err.println("Erro ao atualizar usuário: " + e.getMessage());  // Loga a exceção caso ocorra
+            System.err.println("Erro ao atualizar usuário: " + e.getMessage());
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             System.err.println("Erro inesperado ao atualizar usuário: " + e.getMessage());
@@ -93,6 +92,26 @@ public class UsuarioController {
         return ResponseEntity.ok("sucesso!");
     }
 
+    // Endpoint para retornar o email
+    @GetMapping("/me")
+    public ResponseEntity<UsuarioDTO> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Usuario usuario = (Usuario) authentication.getPrincipal();
+
+        // Converter o objeto Usuario para UsuarioDTO
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setId(usuario.getId());
+        usuarioDTO.setNome(usuario.getNome());
+        usuarioDTO.setEmail(usuario.getEmail());
+        usuarioDTO.setCpf(usuario.getCpf());
+
+        return ResponseEntity.ok(usuarioDTO);
+    }
 
     // TODO
 //    // Endpoint para resetar a senha

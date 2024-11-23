@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "usuario") // Define a tabela "usuario" no banco de dados
+@Table(name = "usuario")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true) // Define o e-mail como obrigatório e único
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -31,10 +31,10 @@ public class Usuario {
     private List<Filme> filmesCriados;
 
     @Column(name = "password_reset_token")
-    private String passwordResetToken; // Token para redefinição de senha
+    private String passwordResetToken;
 
     @Column(name = "token_expiration_time")
-    private LocalDateTime tokenExpirationTime; // Validade do token
+    private LocalDateTime tokenExpirationTime;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
@@ -120,6 +120,7 @@ public class Usuario {
         this.deletedAt = deletedAt;
     }
 
+    // TODO: Esqueci minha senha
     public String getPasswordResetToken() { return passwordResetToken; }
 
     public void setPasswordResetToken(String passwordResetToken) { this.passwordResetToken = passwordResetToken; }

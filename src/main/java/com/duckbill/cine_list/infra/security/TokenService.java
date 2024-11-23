@@ -25,12 +25,12 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
             return JWT.create()
-                    .withIssuer("cine-list-api")                // Nome da aplicação ou API
-                    .withSubject(usuario.getEmail())            // Identificador do usuário, por exemplo, o email
-                    .withClaim("authorities", Collections.singletonList("ROLE_USER")) // Define a autoridade
+                    .withIssuer("cine-list-api")
+                    .withSubject(usuario.getEmail())
+                    .withClaim("authorities", Collections.singletonList("ROLE_USER"))
                     .withClaim("userId", usuario.getId().toString())
-                    .withExpiresAt(this.generateExpirationDate()) // Define a data de expiração
-                    .sign(algorithm);                          // Assina o token com o algoritmo HMAC256 e a chave secreta
+                    .withExpiresAt(this.generateExpirationDate())
+                    .sign(algorithm);
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Erro ao gerar o token JWT", exception);
         }
@@ -45,9 +45,8 @@ public class TokenService {
                     .withIssuer("cine-list-api")
                     .build()
                     .verify(token)
-                    .getSubject(); // Retorna o "subject" (no caso, o email do usuário) do token
+                    .getSubject();
         } catch (JWTVerificationException exception) {
-            // Token inválido ou expirado
             return null;
         }
     }

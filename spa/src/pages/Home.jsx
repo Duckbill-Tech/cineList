@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import AddMovie from "../components/AddMovie";
 import Movies from "../components/Movies";
 import MoviesSeen from "../components/MoviesSeen";
 import Katerine from "../components/Katerine";
 import Nathalie from "../components/Nathalie";
-import { getAllFilmes, createFilme }from "../../service/FilmeService";
-
+import { getAllFilmes, createFilme } from "../../service/FilmeService";
+import { getCurrentUser } from "../../service/UsuarioService";
 
 function Home() {
+  // Adiciona classes ao body ao montar o componente
   useEffect(() => {
     document.body.classList.add("bg-black", "text-white");
     return () => {
@@ -17,11 +17,28 @@ function Home() {
     };
   }, []);
 
-  const [searchParams] = useSearchParams();
-  const email = searchParams.get("email");
+  // Estado para armazenar o e-mail do usuário
+  const [email, setEmail] = useState("");
 
+  // Estado para armazenar a lista de filmes
   const [movies, setMovies] = useState([]);
+
+  // Estado para armazenar a lista de filmes já vistos
   const [moviesSeen, setMoviesSeen] = useState([]);
+
+  // Função para buscar o usuário atual
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await getCurrentUser(); // Faz a requisição para obter o usuário
+        setEmail(user.email); // Atualiza o estado com o e-mail do usuário
+      } catch (error) {
+        console.error("Erro ao obter usuário:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   // Função para buscar todos os filmes ao carregar a página
   useEffect(() => {
@@ -37,6 +54,7 @@ function Home() {
     fetchMovies();
   }, []); // Executa uma vez ao carregar a página
 
+  // Função para mover um filme para a lista de filmes vistos
   const onMovieClick = (movieId) => {
     const updatedMovies = movies.filter((movie) => movie.id !== movieId);
     const movieToMove = movies.find((movie) => movie.id === movieId);
@@ -49,6 +67,7 @@ function Home() {
     setMovies(updatedMovies);
   };
 
+  // Função para adicionar um novo filme
   const onAddMovieSubmit = async (titulo) => {
     try {
       const newMovie = await createFilme({ titulo });
@@ -58,6 +77,7 @@ function Home() {
     }
   };
 
+  // Funções para deletar filmes das listas
   const onDeleteMovieClick = (movieId) => {
     setMovies(movies.filter((movie) => movie.id !== movieId));
   };
@@ -66,6 +86,7 @@ function Home() {
     setMoviesSeen(moviesSeen.filter((movie) => movie.id !== movieId));
   };
 
+  // Funções para limpar todas as listas
   const onClearAllMovies = () => setMovies([]);
   const onClearAllMoviesSeen = () => setMoviesSeen([]);
 

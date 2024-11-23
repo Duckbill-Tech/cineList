@@ -34,12 +34,12 @@ public class FilmeController {
                         DecodedJWT decodedJWT = JWT.decode(cookie.getValue());
                         return UUID.fromString(decodedJWT.getClaim("userId").asString());
                     } catch (Exception e) {
-                        return null; // Retorna null se houver erro ao decodificar o token
+                        return null;
                     }
                 }
             }
         }
-        return null; // Retorna null se não encontrar o cookie ou o token estiver ausente
+        return null;
     }
 
     // Endpoint para criar um novo filme
@@ -54,11 +54,11 @@ public class FilmeController {
     @GetMapping("/{id}")
     public ResponseEntity<FilmeDTO> getFilmeById(@PathVariable String id) {
         try {
-            UUID uuid = UUID.fromString(id);  // Validação do UUID
+            UUID uuid = UUID.fromString(id);
             Optional<FilmeDTO> filme = filmeService.getById(uuid);
             return filme.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);  // Retorna 400 se o UUID for inválido
+            return ResponseEntity.badRequest().body(null);
         }
     }
 
@@ -73,11 +73,11 @@ public class FilmeController {
     @PutMapping("/{id}")
     public ResponseEntity<FilmeDTO> updateFilme(@PathVariable String id, @RequestBody FilmeDTO filmeDTO) {
         try {
-            UUID uuid = UUID.fromString(id);  // Validação do UUID
+            UUID uuid = UUID.fromString(id);
             FilmeDTO updatedFilme = filmeService.update(uuid, filmeDTO);
             return ResponseEntity.ok(updatedFilme);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);  // Retorna 400 se o UUID for inválido
+            return ResponseEntity.badRequest().body(null);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -87,11 +87,11 @@ public class FilmeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFilme(@PathVariable String id) {
         try {
-            UUID uuid = UUID.fromString(id);  // Validação do UUID
+            UUID uuid = UUID.fromString(id);
             filmeService.delete(uuid);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();  // Retorna 400 se o UUID for inválido
+            return ResponseEntity.badRequest().build();
         }
     }
 }

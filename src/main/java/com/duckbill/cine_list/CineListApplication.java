@@ -10,12 +10,12 @@ public class CineListApplication {
 	public static void main(String[] args) {
 		// Carregar as variáveis do .env, se disponível
 		Dotenv dotenv = Dotenv.configure()
-				.ignoreIfMissing() // Ignora se o arquivo .env não estiver presente
+				.ignoreIfMissing()
 				.load();
 
 		// Configurar as variáveis do .env no System Properties, sem sobrescrever existentes
 		dotenv.entries().stream()
-				.filter(entry -> System.getProperty(entry.getKey()) == null) // Evita sobrescrever variáveis existentes
+				.filter(entry -> System.getProperty(entry.getKey()) == null)
 				.forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
 
 		// Inicializar a aplicação Spring Boot

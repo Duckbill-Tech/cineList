@@ -1,18 +1,17 @@
-// TODO
-//package com.duckbill.cine_list.service;
-//
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.stereotype.Service;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//
-//import java.io.OutputStream;
-//import java.net.HttpURLConnection;
-//import java.net.URL;
-//
-//@Service
-//public class EmailService {
-//
+package com.duckbill.cine_list.service;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+@Service
+public class EmailService {
+
 //    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 //
 //    private final String sendGridApiKey;
@@ -79,4 +78,4 @@
 //
 //        logger.debug("Resposta da API SendGrid: Código {}", responseCode);
 //    }
-//}
+}
