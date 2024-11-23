@@ -1,11 +1,7 @@
 package com.duckbill.cine_list.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
 
-@Setter
-@Getter
 public class ResetPasswordRequest {
     // TODO: ESQUECI MINHA SENHA
 //    // Getters e Setters

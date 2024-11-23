@@ -22,14 +22,14 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
-    private final EmailService emailService;
+    //private final EmailService emailService; TODO
 
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, TokenService tokenService, EmailService emailService) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, TokenService tokenService) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
-        this.emailService = emailService;
+        //this.emailService = emailService; TODO
     }
 
     // Metodo para registrar um novo usuário e retornar o token
@@ -53,6 +53,7 @@ public class UsuarioService {
         return new ResponseDTO(savedUsuario.getNome(), token);
     }
 
+    // Metodo para Login do usuário
     public ResponseDTO login(String email, String senha) {
         // Procurando o usuário no banco de dados
         Usuario usuario = usuarioRepository.findByEmail(email)
@@ -70,6 +71,7 @@ public class UsuarioService {
         return new ResponseDTO(usuario.getNome(), token);
     }
 
+    // Metodo para pega criar usuario (sem token)
     public UsuarioDTO create(UsuarioDTO usuarioDTO) {
         Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
         usuario.setId(UUID.randomUUID());
@@ -83,11 +85,13 @@ public class UsuarioService {
         return UsuarioMapper.toDto(savedUsuario);
     }
 
+    // Metodo para pega usuario por id
     public Optional<UsuarioDTO> getById(UUID id) {
         return usuarioRepository.findById(id)
                 .map(UsuarioMapper::toDto);
     }
 
+    // Metodo para pegar todos
     public List<UsuarioDTO> getAll() {
         return usuarioRepository.findAll()
                 .stream()
@@ -95,6 +99,7 @@ public class UsuarioService {
                 .collect(Collectors.toList());
     }
 
+    // Metodo para update usuário
     public ResponseDTO update(UUID id, UsuarioDTO usuarioDTO) {
         return usuarioRepository.findById(id)
                 .map(usuario -> {
@@ -115,11 +120,18 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
+    // Metodo para deletar usuário
     public void delete(UUID id) {
         usuarioRepository.findById(id).ifPresent(usuario -> {
             usuario.setDeletedAt(LocalDateTime.now());
             usuarioRepository.save(usuario);
         });
+    }
+
+    // Metodo para buscar o usuário pelo e-mail
+    public Optional<UsuarioDTO> getByEmail(String email) {
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+        return usuario.map(UsuarioMapper::toDto);
     }
 
     private boolean isValidCPF(String cpf) {

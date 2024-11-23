@@ -1,18 +1,30 @@
 package com.duckbill.cine_list.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Setter
-@Getter
 public class ResponseDTO {
-    // Getters e Setters
     private String message;
     private String token;
+
+    public ResponseDTO() {}
 
     public ResponseDTO(String message, String token) {
         this.message = message;
         this.token = token;
     }
 
+    // Getters e setters
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

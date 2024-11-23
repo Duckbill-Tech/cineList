@@ -1,16 +1,16 @@
 package com.duckbill.cine_list.controller;
 
-import com.duckbill.cine_list.db.entity.Usuario;
 import com.duckbill.cine_list.dto.ResponseDTO;
 import com.duckbill.cine_list.dto.UsuarioDTO;
+import com.duckbill.cine_list.infra.security.TokenService;
 import com.duckbill.cine_list.service.UsuarioService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +22,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private TokenService tokenService;
 
     // Endpoint para criar um novo usuário
     @PostMapping
@@ -94,23 +97,36 @@ public class UsuarioController {
 
     // Endpoint para retornar o email
     @GetMapping("/me")
-    public ResponseEntity<UsuarioDTO> getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated()) {
+    public ResponseEntity<UsuarioDTO> getCurrentUser(HttpServletRequest request) {
+        String token = getTokenFromCookie(request);
+        if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        try {
+            // Decodificar o token para obter o e-mail
+            String email = tokenService.validateToken(token);
 
-        Usuario usuario = (Usuario) authentication.getPrincipal();
+            if (email == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            Optional<UsuarioDTO> usuario = usuarioService.getByEmail(email);
+            return usuario.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
-        // Converter o objeto Usuario para UsuarioDTO
-        UsuarioDTO usuarioDTO = new UsuarioDTO();
-        usuarioDTO.setId(usuario.getId());
-        usuarioDTO.setNome(usuario.getNome());
-        usuarioDTO.setEmail(usuario.getEmail());
-        usuarioDTO.setCpf(usuario.getCpf());
-
-        return ResponseEntity.ok(usuarioDTO);
+    // Metodo auxiliar para recuperar o token JWT do cookie
+    private String getTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("authToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     // TODO

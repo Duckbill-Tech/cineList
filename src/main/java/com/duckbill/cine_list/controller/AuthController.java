@@ -22,8 +22,7 @@ public class AuthController {
         try {
             ResponseDTO responseDTO = usuarioService.login(body.email(), body.senha());
 
-            String token = responseDTO.getToken(); // Aqui pegamos o token
-            System.out.println("Login realizado com sucesso: " + body.email());
+            String token = responseDTO.getToken();
 
             // Criação do cookie com o token JWT
             Cookie cookie = new Cookie("authToken", token);
