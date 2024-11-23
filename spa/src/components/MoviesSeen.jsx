@@ -5,14 +5,10 @@ import {
   StarIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { deleteFilme } from "../../service/FilmeService";
 
-import PropTypes from "prop-types";
-
-function MoviesSeen({
-  moviesSeen,
-  onDeleteMovieSeenClick,
-  onClearAllMoviesSeen,
-}) {
+// eslint-disable-next-line react/prop-types
+function MoviesSeen({ moviesSeen, setMoviesSeen }) {
   const [movieComments, setMovieComments] = useState({});
   const [openForm, setOpenForm] = useState({});
   const [lockedFields, setLockedFields] = useState({});
@@ -44,6 +40,34 @@ function MoviesSeen({
     }));
   };
 
+  const onDeleteMovieSeenClick = async (movieId) => {
+    try {
+      // Envia a requisição ao backend para deletar o filme
+      await deleteFilme(movieId);
+
+      // Atualiza o estado local para remover o filme
+      setMoviesSeen((prevMoviesSeen) =>
+        prevMoviesSeen.filter((movie) => movie.id !== movieId)
+      );
+    } catch (error) {
+      console.error("Erro ao deletar o filme assistido:", error);
+      alert("Não foi possível deletar o filme assistido. Tente novamente.");
+    }
+  };
+
+  const onClearAllMoviesSeen = async () => {
+    try {
+      // Envia requisições para deletar todos os filmes no backend
+      await Promise.all(moviesSeen.map((movie) => deleteFilme(movie.id)));
+
+      // Limpa o estado local
+      setMoviesSeen([]);
+    } catch (error) {
+      console.error("Erro ao limpar a lista de filmes assistidos:", error);
+      alert("Não foi possível limpar a lista de filmes assistidos. Tente novamente.");
+    }
+  };
+
   return (
     <div
       className="border border-amber-500 rounded-md p-4"
@@ -59,23 +83,23 @@ function MoviesSeen({
             <div className="flex gap-2 items-center">
               <button
                 className="w-full text-left text-black bg-white p-2 rounded-md font-josefin-slab text-s"
-                aria-label={`Título do filme: ${movie.title}`}
+                aria-label={`Título do filme: ${movie.titulo}`}
               >
-                {movie.title}
+                {movie.titulo}
               </button>
               <button
                 onClick={() => toggleForm(movie.id)}
                 className="text-black bg-white p-2 rounded-md"
                 aria-label={`${
                   openForm[movie.id] ? "Fechar" : "Abrir"
-                } formulário para comentários do filme ${movie.title}`}
+                } formulário para comentários do filme ${movie.titulo}`}
               >
                 {openForm[movie.id] ? <ChevronUpIcon /> : <ChevronDownIcon />}
               </button>
               <button
                 onClick={() => onDeleteMovieSeenClick(movie.id)}
                 className="text-black bg-white p-2 rounded-md"
-                aria-label={`Remover o filme ${movie.title} da lista de assistidos`}
+                aria-label={`Remover o filme ${movie.titulo} da lista de assistidos`}
               >
                 <TrashIcon aria-hidden="true" />
               </button>
@@ -100,7 +124,7 @@ function MoviesSeen({
                   onKeyDown={(e) => handleCommentKeyPress(movie.id, e)}
                   disabled={lockedFields[movie.id]}
                   className="p-1 border border-gray-300 rounded-md"
-                  aria-label={`Campo de comentário para o filme ${movie.title}`}
+                  aria-label={`Campo de comentário para o filme ${movie.titulo}`}
                 />
                 <label className="text-xs mt-2" htmlFor={`rating-${movie.id}`}>
                   Nota:
@@ -109,7 +133,7 @@ function MoviesSeen({
                   id={`rating-${movie.id}`}
                   className="flex items-center space-x-1"
                   role="radiogroup"
-                  aria-label={`Avaliação do filme ${movie.title}`}
+                  aria-label={`Avaliação do filme ${movie.titulo}`}
                 >
                   {[1, 2, 3, 4, 5].map((star) => (
                     <StarIcon
@@ -143,11 +167,4 @@ function MoviesSeen({
     </div>
   );
 }
-
-MoviesSeen.propTypes = {
-  moviesSeen: PropTypes.array.isRequired,
-  onDeleteMovieSeenClick: PropTypes.func.isRequired,
-  onClearAllMoviesSeen: PropTypes.func.isRequired,
-};
-
 export default MoviesSeen;

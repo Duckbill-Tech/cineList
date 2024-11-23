@@ -1,12 +1,6 @@
 import { TrashIcon } from "lucide-react";
-import PropTypes from "prop-types";
-
-function Movies({
-  movies,
-  onMovieClick,
-  onDeleteMovieClick,
-  onClearAllMovies,
-}) {
+// eslint-disable-next-line react/prop-types
+function Movies({ movies, onMovieClick, onDeleteMovieClick, onClearAllMovies,}) {
   return (
     <div
       className="border border-amber-500 rounded-md p-4"
@@ -25,14 +19,14 @@ function Movies({
             <button
               className="w-full text-left flex text-black bg-white p-2 rounded-md"
               onClick={() => onMovieClick(movie.id)}
-              aria-label={`Marcar "${movie.title}" como assistido`}
+              aria-label={`Marcar "${movie.titulo}" como assistido`}
             >
-              {movie.title}
+              {movie.titulo}
             </button>
             <button
               onClick={() => onDeleteMovieClick(movie.id)}
               className="text-black bg-white p-2 rounded-md"
-              aria-label={`Remover "${movie.title}" da lista`}
+              aria-label={`Remover "${movie.titulo}" da lista`}
             >
               <TrashIcon aria-hidden="true" />
             </button>
@@ -49,13 +43,5 @@ function Movies({
     </div>
   );
 }
-
-// Validação de propriedades
-Movies.propTypes = {
-  movies: PropTypes.array.isRequired,
-  onMovieClick: PropTypes.func.isRequired,
-  onDeleteMovieClick: PropTypes.func.isRequired,
-  onClearAllMovies: PropTypes.func.isRequired,
-};
 
 export default Movies;

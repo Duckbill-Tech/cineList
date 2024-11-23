@@ -1,20 +1,21 @@
 import { useState } from "react";
-import { createFilme } from "../../service/FilmeService";
 
 // eslint-disable-next-line react/prop-types
-function AddMovie({ userEmail, onAddMovieSubmit }) {
+function AddMovie({ onAddMovieSubmit }) {
   const [titulo, setTitulo] = useState("");
   const [feedback, setFeedback] = useState("");
 
-  const handleAddMovie = async () => {
+  const handleAddMovie = async (event) => {
+    event.preventDefault();
+
     if (!titulo.trim()) {
       setFeedback("Por favor, preencha o título do filme.");
       return;
     }
 
     try {
-      await onAddMovieSubmit(titulo); // Use a função passada como prop
-      setTitulo(""); 
+      await onAddMovieSubmit(titulo);
+      setTitulo("");
       setFeedback("Filme adicionado com sucesso!");
     } catch (error) {
       console.error("Erro ao adicionar filme:", error);

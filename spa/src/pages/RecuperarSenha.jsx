@@ -5,7 +5,7 @@ function RecuperarSenha() {
   const [email, setEmail] = useState("");
   const [feedback, setFeedback] = useState("");
   const navigate = useNavigate();
-
+  // TODO:
   // Função chamada quando o email de recuperação for enviado
   const handleRecuperarSenha = (event) => {
     event.preventDefault(); // Impede o comportamento padrão do formulário

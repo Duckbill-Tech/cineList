@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import AddMovie from "../components/AddMovie";
 import Movies from "../components/Movies";
 import MoviesSeen from "../components/MoviesSeen";
 import Katerine from "../components/Katerine";
 import Nathalie from "../components/Nathalie";
-import { getAllFilmes, createFilme } from "../../service/FilmeService";
+import { getAllFilmes, createFilme, deleteFilme }from "../../service/FilmeService";
+
 
 function Home() {
-  // Adiciona classes ao body ao montar o componente
   useEffect(() => {
     document.body.classList.add("bg-black", "text-white");
     return () => {
@@ -16,34 +17,16 @@ function Home() {
     };
   }, []);
 
-  // Estado para armazenar o e-mail do usuário
-  const [email, setEmail] = useState("");
+  const [searchParams] = useSearchParams();
+  const nome = searchParams.get("nome");
 
-  // Estado para armazenar a lista de filmes
   const [movies, setMovies] = useState([]);
-
-  // Estado para armazenar a lista de filmes já vistos
   const [moviesSeen, setMoviesSeen] = useState([]);
 
-  // Função para buscar o usuário atual
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const user = await getCurrentUser(); // Faz a requisição para obter o usuário
-        setEmail(user.email); // Atualiza o estado com o e-mail do usuário
-      } catch (error) {
-        console.error("Erro ao obter usuário:", error);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  // Função para buscar todos os filmes ao carregar a página
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const filmes = await getAllFilmes(); // Função para buscar filmes
+        const filmes = await getAllFilmes();
         setMovies(filmes);
       } catch (error) {
         console.error("Erro ao buscar filmes:", error);
@@ -51,9 +34,8 @@ function Home() {
     };
 
     fetchMovies();
-  }, []); // Executa uma vez ao carregar a página
+  }, []); 
 
-  // Função para mover um filme para a lista de filmes vistos
   const onMovieClick = (movieId) => {
     const updatedMovies = movies.filter((movie) => movie.id !== movieId);
     const movieToMove = movies.find((movie) => movie.id === movieId);
@@ -66,7 +48,6 @@ function Home() {
     setMovies(updatedMovies);
   };
 
-  // Função para adicionar um novo filme
   const onAddMovieSubmit = async (titulo) => {
     try {
       const newMovie = await createFilme({ titulo });
@@ -75,19 +56,58 @@ function Home() {
       console.error("Erro ao adicionar filme:", error);
     }
   };
-
-  // Funções para deletar filmes das listas
-  const onDeleteMovieClick = (movieId) => {
-    setMovies(movies.filter((movie) => movie.id !== movieId));
+  
+  const onDeleteMovieClick = async (movieId) => {
+    try {
+      // Envia a requisição para deletar o filme no backend
+      await deleteFilme(movieId);
+  
+      // Atualiza o estado local para remover o filme
+      setMovies((prevMovies) => prevMovies.filter((movie) => movie.id !== movieId));
+    } catch (error) {
+      console.error("Erro ao deletar o filme:", error);
+      alert("Não foi possível deletar o filme. Tente novamente.");
+    }
+  };
+  
+  const onDeleteMovieSeenClick = async (movieId) => {
+    try {
+      // Envia a requisição para deletar o filme no backend
+      await deleteFilme(movieId);
+  
+      // Atualiza o estado local para remover o filme
+      setMoviesSeen((prevMoviesSeen) => prevMoviesSeen.filter((movie) => movie.id !== movieId));
+    } catch (error) {
+      console.error("Erro ao deletar o filme assistido:", error);
+      alert("Não foi possível deletar o filme assistido. Tente novamente.");
+    }
   };
 
-  const onDeleteMovieSeenClick = (movieId) => {
-    setMoviesSeen(moviesSeen.filter((movie) => movie.id !== movieId));
+  const onClearAllMovies = async () => {
+    try {
+      // Deleta todos os filmes para assistir no backend
+      await Promise.all(movies.map((movie) => deleteFilme(movie.id)));
+  
+      // Limpa o estado local
+      setMovies([]);
+    } catch (error) {
+      console.error("Erro ao limpar a lista de filmes:", error);
+      alert("Não foi possível limpar a lista. Tente novamente.");
+    }
   };
-
-  // Funções para limpar todas as listas
-  const onClearAllMovies = () => setMovies([]);
-  const onClearAllMoviesSeen = () => setMoviesSeen([]);
+  
+  const onClearAllMoviesSeen = async () => {
+    try {
+      // Deleta todos os filmes assistidos no backend
+      await Promise.all(moviesSeen.map((movie) => deleteFilme(movie.id)));
+  
+      // Limpa o estado local
+      setMoviesSeen([]);
+    } catch (error) {
+      console.error("Erro ao limpar a lista de filmes assistidos:", error);
+      alert("Não foi possível limpar a lista de filmes assistidos. Tente novamente.");
+    }
+  };
 
   return (
     <div className="w-screen bg-black flex flex-col">
@@ -96,7 +116,7 @@ function Home() {
       <div className="w-full max-w-7xl mx-auto bg-black flex justify-center p-6 flex-grow">
         <div className="w-full space-y-6">
           <div id="cinelist" className="text-center">
-            <p className="text-white mb-2">Bem vinda/o, {email}</p>
+            <p className="text-white mb-2">Bem vinda/o! {nome} </p>
             <p className="w-full gap-6 mx-auto text-white p-4 mt-10 mb-10 max-w-4xl">
               Com o CINELIST, você pode criar sua lista de filmes perfeita! Em
               um único lugar é possível adicionar, gerenciar e acompanhar seus
