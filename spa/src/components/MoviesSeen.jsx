@@ -5,68 +5,89 @@ import {
   TrashIcon,
   StarIcon,
 } from "lucide-react";
-import { useState } from "react";
-import { deleteFilme, updateFilme } from "../../service/FilmeService";
+import { useState, useEffect } from "react";
+import { deleteFilme, updateFilme, getAllFilmes } from "../../service/FilmeService";
 
 function MoviesSeen({ moviesSeen, setMoviesSeen }) {
-  const [movieComments, setMovieComments] = useState({});
   const [openForm, setOpenForm] = useState({});
   const [lockedFields, setLockedFields] = useState({});
 
-  const handleCommentChange = (id, comment) => {
-    setMovieComments((prevComments) => ({
-      ...prevComments,
-      [id]: { ...prevComments[id], comment },
-    }));
+  useEffect(() => {
+    async function fetchMovies() {
+      try {
+        const filmes = await getAllFilmes(); // Busca todos os filmes do backend
+        const assistidos = filmes.filter((filme) => filme.completedAt); // Filtra apenas os assistidos
+        setMoviesSeen(assistidos); // Atualiza a lista de filmes assistidos
+      } catch (error) {
+        console.error("Erro ao carregar filmes:", error);
+      }
+    }
+
+    fetchMovies();
+  }, [setMoviesSeen]);
+
+  const handleRatingChange = async (id, rating) => {
+    try {
+      const movieToUpdate = moviesSeen.find((movie) => movie.id === id);
+      const updates = { ...movieToUpdate, nota: rating };
+
+      const updatedMovie = await updateFilme(id, updates);
+
+      // Atualiza o estado local com a nova nota
+      setMoviesSeen((prevMoviesSeen) =>
+        prevMoviesSeen.map((movie) =>
+          movie.id === id ? updatedMovie : movie
+        )
+      );
+    } catch (error) {
+      console.error("Erro ao salvar a nota:", error);
+      alert("Erro ao salvar a avaliação. Tente novamente.");
+    }
   };
 
-  const handleRatingChange = (id, rating) => {
-    setMovieComments((prevComments) => ({
-      ...prevComments,
-      [id]: { ...prevComments[id], rating },
-    }));
+  const handleCommentChange = (id, comment) => {
+    setMoviesSeen((prevMoviesSeen) =>
+      prevMoviesSeen.map((movie) =>
+        movie.id === id ? { ...movie, descricao: comment } : movie
+      )
+    );
+  };
+
+  const handleCommentKeyPress = (id, e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      saveMovieUpdates(id);
+    }
   };
 
   const saveMovieUpdates = async (movieId) => {
-    const comment = movieComments[movieId]?.comment || "";
-    const rating = movieComments[movieId]?.rating || 0;
-
+    const movieToUpdate = moviesSeen.find((movie) => movie.id === movieId);
+  
     try {
-      const movieToUpdate = moviesSeen.find((movie) => movie.id === movieId);
-      const updates = {
-        ...movieToUpdate,
-        descricao: comment,
-        nota: rating,
-      };
+      const updatedMovie = await updateFilme(movieId, movieToUpdate);
 
-      const updatedMovie = await updateFilme(movieId, updates);
-
-      // Atualiza o estado com o filme atualizado
       setMoviesSeen((prevMoviesSeen) =>
         prevMoviesSeen.map((movie) =>
           movie.id === movieId ? updatedMovie : movie
         )
       );
-
-      console.log("Filme atualizado com sucesso:", updatedMovie);
+  
+      console.log("Comentário salvo com sucesso:", updatedMovie);
     } catch (error) {
-      console.error("Erro ao salvar as alterações do filme:", error);
-      alert("Erro ao salvar as alterações. Tente novamente.");
+      console.error("Erro ao salvar o comentário:", error);
+      alert("Erro ao salvar o comentário. Tente novamente.");
     }
   };
-
-  const handleCommentKeyPress = (id, e) => {
-    if (e.key === "Enter") {
-      setLockedFields((prev) => ({ ...prev, [id]: true }));
-      saveMovieUpdates(id); // Salva as alterações ao pressionar Enter
-    }
-  };
-
+  
   const toggleForm = (id) => {
     setOpenForm((prevOpenForm) => ({
       ...prevOpenForm,
       [id]: !prevOpenForm[id],
     }));
+  };
+
+  const enableCommentEditing = (id) => {
+    setLockedFields((prev) => ({ ...prev, [id]: false }));
   };
 
   const onDeleteMovieSeenClick = async (movieId) => {
@@ -92,10 +113,7 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
     if (!confirmation) return;
 
     try {
-      // Envia requisições para deletar todos os filmes no backend
       await Promise.all(moviesSeen.map((movie) => deleteFilme(movie.id)));
-
-      // Limpa o estado local
       setMoviesSeen([]);
     } catch (error) {
       console.error("Erro ao limpar a lista de filmes assistidos:", error);
@@ -148,19 +166,28 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
                 <label className="text-xs" htmlFor={`comment-${movie.id}`}>
                   Comentário:
                 </label>
-                <input
-                  id={`comment-${movie.id}`}
-                  type="text"
-                  placeholder="Deixe um comentário"
-                  value={movieComments[movie.id]?.comment || ""}
-                  onChange={(e) =>
-                    handleCommentChange(movie.id, e.target.value)
-                  }
-                  onKeyDown={(e) => handleCommentKeyPress(movie.id, e)}
-                  disabled={lockedFields[movie.id]}
-                  className="p-1 border border-gray-300 rounded-md"
-                  aria-label={`Campo de comentário para o filme ${movie.titulo}`}
-                />
+                {lockedFields[movie.id] ? (
+                  <p
+                    onClick={() => enableCommentEditing(movie.id)}
+                    className="cursor-pointer p-1 border border-gray-300 rounded-md"
+                    aria-label={`Comentário salvo para o filme ${movie.titulo}`}
+                  >
+                    {movie.descricao || "Clique para adicionar um comentário"}
+                  </p>
+                ) : (
+                  <textarea
+                    id={`comment-${movie.id}`}
+                    placeholder="Deixe um comentário"
+                    value={movie.descricao || ""}
+                    onChange={(e) =>
+                      handleCommentChange(movie.id, e.target.value)
+                    }
+                    onKeyDown={(e) => handleCommentKeyPress(movie.id, e)}
+                    className="p-2 border border-neutral-200 rounded-md resize-none"
+                    aria-label={`Campo de comentário para o filme ${movie.titulo}`}
+                    rows="3"
+                  />
+                )}
                 <label className="text-xs mt-2" htmlFor={`rating-${movie.id}`}>
                   Nota:
                 </label>
@@ -175,14 +202,10 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
                       key={star}
                       onClick={() => handleRatingChange(movie.id, star)}
                       className={`cursor-pointer ${
-                        star <= (movieComments[movie.id]?.rating || 0)
-                          ? "text-yellow-500"
-                          : "text-gray-300"
+                        star <= movie.nota ? "text-yellow-500" : "text-gray-300"
                       }`}
                       role="radio"
-                      aria-checked={
-                        star === (movieComments[movie.id]?.rating || 0)
-                      }
+                      aria-checked={star === movie.nota}
                       aria-label={`${star} estrelas`}
                     />
                   ))}
