@@ -1,6 +1,29 @@
+/* eslint-disable react/prop-types */
 import { TrashIcon } from "lucide-react";
-// eslint-disable-next-line react/prop-types
-function Movies({ movies, onMovieClick, onDeleteMovieClick, onClearAllMovies,}) {
+import { updateFilme } from "../../service/FilmeService"; // Certifique-se de importar o serviço
+
+function Movies({
+  movies,
+  onMovieClick,
+  onDeleteMovieClick,
+  onClearAllMovies,
+}) {
+  const onCompleteMovieClick = async (movieId) => {
+    try {
+      const updates = {
+        completedAt: new Date().toISOString(),
+      };
+
+      await updateFilme(movieId, updates);
+      onMovieClick(movieId);
+
+      alert("Filme marcado como assistido!");
+    } catch (error) {
+      console.error("Erro ao marcar filme como assistido:", error);
+      alert("Não foi possível marcar o filme como assistido. Tente novamente.");
+    }
+  };
+
   return (
     <div
       className="border border-amber-500 rounded-md p-4"
@@ -18,7 +41,7 @@ function Movies({ movies, onMovieClick, onDeleteMovieClick, onClearAllMovies,}) 
           <li key={movie.id} className="flex gap-2">
             <button
               className="w-full text-left flex text-black bg-white p-2 rounded-md"
-              onClick={() => onMovieClick(movie.id)}
+              onClick={() => onCompleteMovieClick(movie.id)}
               aria-label={`Marcar "${movie.titulo}" como assistido`}
             >
               {movie.titulo}

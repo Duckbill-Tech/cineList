@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -6,8 +7,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { deleteFilme } from "../../service/FilmeService";
-
-// eslint-disable-next-line react/prop-types
 function MoviesSeen({ moviesSeen, setMoviesSeen }) {
   const [movieComments, setMovieComments] = useState({});
   const [openForm, setOpenForm] = useState({});

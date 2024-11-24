@@ -106,7 +106,10 @@ public class UsuarioService {
                 .map(usuario -> {
                     usuario.setNome(usuarioDTO.getNome());
                     usuario.setEmail(usuarioDTO.getEmail());
-                    usuario.setCpf(usuarioDTO.getCpf());
+
+                    if (!usuario.getCpf().equals(usuarioDTO.getCpf())) {
+                        usuario.setCpf(usuarioDTO.getCpf());
+                    }
 
                     if (!isValidCPF(usuario.getCpf())) {
                         throw new IllegalArgumentException("CPF inválido");

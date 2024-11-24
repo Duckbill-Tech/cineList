@@ -52,13 +52,13 @@ export async function getFilmeById(id) {
     });
 
     if (!response.ok) {
-      throw new Error("Error fetching filme: " + response.statusText);
+      throw new Error("Erro em pegar filme por id: " + response.statusText);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching filme:", error);
+    console.error("Erro em pegar filme por id:", error);
     throw error;
   }
 }
@@ -76,13 +76,13 @@ export async function updateFilme(id, filmeDTO) {
     });
 
     if (!response.ok) {
-      throw new Error("Erro em pegar fiilme por id: " + response.statusText);
+      throw new Error("Erro em update filme: " + response.statusText);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Erro em pegar fiilme por id:", error);
+    console.error("Erro em update filme:", error);
     throw error;
   }
 }
