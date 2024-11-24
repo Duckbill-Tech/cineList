@@ -123,7 +123,7 @@ function Home() {
       <div className="w-full max-w-7xl mx-auto bg-black flex justify-center p-6 flex-grow">
         <div className="w-full space-y-6">
           <div id="cinelist" className="text-center">
-            <p className="text-white mb-2">Bem vinda/o! {nome} </p>
+            <p className="text-white mb-2">Bem vinda/o! {nome}! </p>
             <p className="w-full gap-6 mx-auto text-white p-4 mt-10 mb-10 max-w-4xl">
               Com o CINELIST, você pode criar sua lista de filmes perfeita! Em
               um único lugar é possível adicionar, gerenciar e acompanhar seus
