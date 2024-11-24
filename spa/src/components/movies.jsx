@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { TrashIcon } from "lucide-react";
-import { updateFilme } from "../../service/FilmeService"; // Certifique-se de importar o serviço
+import { updateFilme } from "../../service/FilmeService";
 
 function Movies({
   movies,
@@ -8,19 +8,21 @@ function Movies({
   onDeleteMovieClick,
   onClearAllMovies,
 }) {
+
   const onCompleteMovieClick = async (movieId) => {
     try {
       const updates = {
         completedAt: new Date().toISOString(),
+        titulo: movies.find((movie) => movie.id === movieId)?.titulo,
       };
-
-      await updateFilme(movieId, updates);
+  
+      const updatedMovie = await updateFilme(movieId, updates);
+      console.log("Atualizar o filme com sucesso:", updatedMovie);
+  
       onMovieClick(movieId);
-
-      alert("Filme marcado como assistido!");
     } catch (error) {
-      console.error("Erro ao marcar filme como assistido:", error);
-      alert("Não foi possível marcar o filme como assistido. Tente novamente.");
+      console.error("Erro ao marcar um filme como assistido:", error);
+      alert("Erro ao marcar um filme como assistido. Por favor tente de novo.");
     }
   };
 

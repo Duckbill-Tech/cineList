@@ -6,7 +6,8 @@ import {
   StarIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { deleteFilme } from "../../service/FilmeService";
+import { deleteFilme, updateFilme } from "../../service/FilmeService";
+
 function MoviesSeen({ moviesSeen, setMoviesSeen }) {
   const [movieComments, setMovieComments] = useState({});
   const [openForm, setOpenForm] = useState({});
@@ -26,9 +27,38 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
     }));
   };
 
+  const saveMovieUpdates = async (movieId) => {
+    const comment = movieComments[movieId]?.comment || "";
+    const rating = movieComments[movieId]?.rating || 0;
+
+    try {
+      const movieToUpdate = moviesSeen.find((movie) => movie.id === movieId);
+      const updates = {
+        ...movieToUpdate,
+        descricao: comment,
+        nota: rating,
+      };
+
+      const updatedMovie = await updateFilme(movieId, updates);
+
+      // Atualiza o estado com o filme atualizado
+      setMoviesSeen((prevMoviesSeen) =>
+        prevMoviesSeen.map((movie) =>
+          movie.id === movieId ? updatedMovie : movie
+        )
+      );
+
+      console.log("Filme atualizado com sucesso:", updatedMovie);
+    } catch (error) {
+      console.error("Erro ao salvar as alterações do filme:", error);
+      alert("Erro ao salvar as alterações. Tente novamente.");
+    }
+  };
+
   const handleCommentKeyPress = (id, e) => {
     if (e.key === "Enter") {
       setLockedFields((prev) => ({ ...prev, [id]: true }));
+      saveMovieUpdates(id); // Salva as alterações ao pressionar Enter
     }
   };
 
@@ -40,14 +70,15 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
   };
 
   const onDeleteMovieSeenClick = async (movieId) => {
-    try {
-      // Envia a requisição ao backend para deletar o filme
-      await deleteFilme(movieId);
+    const confirmation = window.confirm("Tem certeza que deseja remover este filme?");
+    if (!confirmation) return;
 
-      // Atualiza o estado local para remover o filme
+    try {
+      await deleteFilme(movieId);
       setMoviesSeen((prevMoviesSeen) =>
         prevMoviesSeen.filter((movie) => movie.id !== movieId)
       );
+      console.log(`Filme com ID ${movieId} foi removido.`);
     } catch (error) {
       console.error("Erro ao deletar o filme assistido:", error);
       alert("Não foi possível deletar o filme assistido. Tente novamente.");
@@ -55,6 +86,11 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
   };
 
   const onClearAllMoviesSeen = async () => {
+    const confirmation = window.confirm(
+      "Tem certeza que deseja remover todos os filmes assistidos?"
+    );
+    if (!confirmation) return;
+
     try {
       // Envia requisições para deletar todos os filmes no backend
       await Promise.all(moviesSeen.map((movie) => deleteFilme(movie.id)));
@@ -166,4 +202,5 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
     </div>
   );
 }
+
 export default MoviesSeen;

@@ -71,6 +71,7 @@ public class FilmeService {
                     filme.setDescricao(filmeDTO.getDescricao()); // Atualiza a descrição
                     filme.setNota(filmeDTO.getNota());
                     filme.setUpdatedAt(LocalDateTime.now());
+                    filme.setCompletedAt(LocalDateTime.now());
                     Filme updatedFilme = filmeRepository.save(filme);
                     return filmeMapper.toDto(updatedFilme);
                 })

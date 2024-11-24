@@ -8,6 +8,7 @@
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/db/repository/UsuarioRepository.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/FilmeDTO.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/LoginRequestDTO.java
+/Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/LoginResponseDTO.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/RegisterRequestDTO.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/ResetPasswordRequest.java
 /Users/katerinewitkoski/Documents/cineList/src/main/java/com/duckbill/cine_list/dto/ResponseDTO.java

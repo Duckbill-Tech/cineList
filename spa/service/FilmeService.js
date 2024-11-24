@@ -72,7 +72,7 @@ export async function updateFilme(id, filmeDTO) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(filmeDTO),
-      credentials: "include", // Adicionando credenciais (cookies)
+      credentials: "include",
     });
 
     if (!response.ok) {

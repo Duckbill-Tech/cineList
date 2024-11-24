@@ -27,14 +27,21 @@ function Home() {
     const fetchMovies = async () => {
       try {
         const filmes = await getAllFilmes();
-        setMovies(filmes);
+  
+        // Separar filmes completados e não completados
+        const filmesNaoCompletados = filmes.filter((filme) => !filme.completedAt);
+        const filmesCompletados = filmes.filter((filme) => filme.completedAt);
+  
+        // Atualizar os estados
+        setMovies(filmesNaoCompletados);
+        setMoviesSeen(filmesCompletados);
       } catch (error) {
         console.error("Erro ao buscar filmes:", error);
       }
     };
-
+  
     fetchMovies();
-  }, []); 
+  }, []);
 
   const onMovieClick = (movieId) => {
     const updatedMovies = movies.filter((movie) => movie.id !== movieId);
@@ -146,6 +153,7 @@ function Home() {
               <MoviesSeen
                 moviesSeen={moviesSeen}
                 onDeleteMovieSeenClick={onDeleteMovieSeenClick}
+                setMoviesSeen={setMoviesSeen}
                 onClearAllMoviesSeen={onClearAllMoviesSeen}
               />
             </div>
