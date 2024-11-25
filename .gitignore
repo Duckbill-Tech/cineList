@@ -28,3 +28,8 @@ replay_pid*
 .vscode
 node_modules/
 
+# Ignorar arquivos gerados pelo Vite
+src/main/resources/static/*
+!src/main/resources/static/.gitkeep
+
+target/
