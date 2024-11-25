@@ -7,7 +7,7 @@ function Layout({ children }) {
       {/* Imagem Fixa */}
       <div className="bg-black flex justify-center items-center py-4 mt-0">
         <img
-          src="./static/CINELIST.jpg"
+          src="./assets/CINELIST.jpg"
           alt="CineList Logo"
           className="w-[800px] h-auto"
         />
