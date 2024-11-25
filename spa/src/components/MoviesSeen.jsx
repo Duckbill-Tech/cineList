@@ -3,11 +3,10 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   TrashIcon,
-  StarIcon,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { deleteFilme, updateFilme, getAllFilmes } from "../../service/FilmeService";
-
+import ReactStars from "react-stars";
 function MoviesSeen({ moviesSeen, setMoviesSeen }) {
   const [openForm, setOpenForm] = useState({});
   const [lockedFields, setLockedFields] = useState({});
@@ -15,9 +14,9 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
   useEffect(() => {
     async function fetchMovies() {
       try {
-        const filmes = await getAllFilmes(); // Busca todos os filmes do backend
-        const assistidos = filmes.filter((filme) => filme.completedAt); // Filtra apenas os assistidos
-        setMoviesSeen(assistidos); // Atualiza a lista de filmes assistidos
+        const filmes = await getAllFilmes();
+        const assistidos = filmes.filter((filme) => filme.completedAt);
+        setMoviesSeen(assistidos);
       } catch (error) {
         console.error("Erro ao carregar filmes:", error);
       }
@@ -33,7 +32,6 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
 
       const updatedMovie = await updateFilme(id, updates);
 
-      // Atualiza o estado local com a nova nota
       setMoviesSeen((prevMoviesSeen) =>
         prevMoviesSeen.map((movie) =>
           movie.id === id ? updatedMovie : movie
@@ -191,25 +189,14 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
                 <label className="text-xs mt-2" htmlFor={`rating-${movie.id}`}>
                   Nota:
                 </label>
-                <div
-                  id={`rating-${movie.id}`}
-                  className="flex items-center space-x-1"
-                  role="radiogroup"
-                  aria-label={`Avaliação do filme ${movie.titulo}`}
-                >
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <StarIcon
-                      key={star}
-                      onClick={() => handleRatingChange(movie.id, star)}
-                      className={`cursor-pointer ${
-                        star <= movie.nota ? "text-yellow-500" : "text-gray-300"
-                      }`}
-                      role="radio"
-                      aria-checked={star === movie.nota}
-                      aria-label={`${star} estrelas`}
-                    />
-                  ))}
-                </div>
+                <ReactStars
+                  count={5}
+                  value={movie.nota || 0}
+                  onChange={(rating) => handleRatingChange(movie.id, rating)}
+                  size={24}
+                  color2={"#ffd700"}
+                  half={true} // Ativa avaliação com meia estrela
+                />
               </div>
             )}
           </li>
