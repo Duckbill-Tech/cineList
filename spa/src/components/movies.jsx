@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { TrashIcon } from "lucide-react";
 import { updateFilme } from "../../service/FilmeService";
 

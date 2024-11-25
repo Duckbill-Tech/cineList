@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-// eslint-disable-next-line react/prop-types
 function AddMovie({ onAddMovieSubmit }) {
   const [titulo, setTitulo] = useState("");
   const [feedback, setFeedback] = useState("");

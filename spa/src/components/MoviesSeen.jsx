@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -195,7 +194,7 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
                   onChange={(rating) => handleRatingChange(movie.id, rating)}
                   size={24}
                   color2={"#ffd700"}
-                  half={true} // Ativa avaliação com meia estrela
+                  half={true}
                 />
               </div>
             )}

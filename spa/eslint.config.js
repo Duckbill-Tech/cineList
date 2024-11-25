@@ -12,7 +12,7 @@ export default [
       ecmaVersion: 2020,
       globals: {
         ...globals.browser,
-        process: "readonly", // Permite o uso de 'process' no código
+        process: "readonly",
       },
       parserOptions: {
         ecmaVersion: "latest",
@@ -38,6 +38,7 @@ export default [
       ],
       "no-unused-vars": ["error", { varsIgnorePattern: "^React$" }],
       "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
     },
   },
 ];
