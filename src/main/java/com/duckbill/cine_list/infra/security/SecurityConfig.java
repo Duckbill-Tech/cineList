@@ -41,7 +41,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Define sessões como stateless
                 .authorizeHttpRequests(authorize -> authorize
                         // Permissões específicas para AuthController
-                        .requestMatchers("/static/**").permitAll()
+                        //.requestMatchers("/static/**").permitAll()
+                        .requestMatchers("/", "/index.html", "/static/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
 
