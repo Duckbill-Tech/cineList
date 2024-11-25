@@ -167,7 +167,7 @@ function Home() {
                 <div className="flex mt-4 justify-center gap-4">
                   <div className="flex items-center space-x-2 w-1/2">
                     <img
-                      src="./static/sapiens-avatar.png"
+                      src="./assets/sapiens-avatar.png"
                       alt="Avatar Katerine"
                       className="w-32 h-32 rounded-full"
                     />
@@ -175,7 +175,7 @@ function Home() {
                   </div>
                   <div className="flex items-center space-x-2 w-1/2">
                     <img
-                      src="./static/sapiens-avatar-2.png"
+                      src="./assets/sapiens-avatar-2.png"
                       alt="Avatar Nathalie"
                       className="w-32 h-32 rounded-full"
                     />
