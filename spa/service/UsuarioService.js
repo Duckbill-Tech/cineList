@@ -1,7 +1,7 @@
 // FETCH PARA CREATE A USER
 export async function createUsuario(usuarioDTO) {
   try {
-    const response = await fetch("http://localhost:8081/api/usuarios", {
+    const response = await fetch("/api/usuarios", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -25,7 +25,7 @@ export async function createUsuario(usuarioDTO) {
 // FETCH FOR GET USER BY ID
 export async function getUsuarioById(id) {
   try {
-    const response = await fetch(`http://localhost:8081/api/usuarios/${id}`, {
+    const response = await fetch(`/api/usuarios/${id}`, {
       method: "GET",
       credentials: "include",
     });
@@ -45,7 +45,7 @@ export async function getUsuarioById(id) {
 // FETCH FOR GET ALL USERS
 export async function getAllUsuarios() {
   try {
-    const response = await fetch("http://localhost:8081/api/usuarios", {
+    const response = await fetch(`/api/usuarios`, {
       method: "GET",
       credentials: "include",
     });
@@ -65,7 +65,7 @@ export async function getAllUsuarios() {
 // FETCH FOR UPDATE USER
 export async function updateUsuario(id, usuarioDTO) {
   try {
-    const response = await fetch(`http://localhost:8081/api/usuarios/${id}`, {
+    const response = await fetch(`/api/usuarios/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -107,7 +107,7 @@ export async function deleteUsuario(id) {
 // FETCH FOR SUCCESS MESSAGE
 export async function getUserSuccess() {
   try {
-    const response = await fetch("http://localhost:8081/api/usuarios/user", {
+    const response = await fetch("/api/usuarios/user", {
       method: "GET",
       credentials: "include"
     });

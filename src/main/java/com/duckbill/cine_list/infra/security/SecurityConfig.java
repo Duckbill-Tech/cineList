@@ -41,48 +41,18 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Define sessões como stateless
                 .authorizeHttpRequests(authorize -> authorize
                         // Permissões específicas para AuthController
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers("/static/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
 
-                        // Permissões para UsuarioController
-                        .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // Criar usuário
-                        .requestMatchers(HttpMethod.GET, "/api/usuarios").permitAll() // Listar usuários
-                        .requestMatchers(HttpMethod.GET, "/api/usuarios/user").hasAuthority("ROLE_USER") // Requer ROLE_USER
-
-                        // Permissões para FilmeController
-                        .requestMatchers(HttpMethod.GET, "/api/filmes").permitAll() // Listar filmes
-                        .requestMatchers(HttpMethod.GET, "/api/filmes/{id}").permitAll() // Buscar filme por ID
-
-
-                        // Permissões abertas para Swagger e documentação
+                                               // Permissões abertas para Swagger e documentação
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
 
-                        // Permissões para Reset Password TODO:
-//                        .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
-//                        .requestMatchers("/reset-password", "/forgot-password").permitAll()
-//                        .requestMatchers("/error", "/error/**").permitAll()
-
-                        // Qualquer outra requisição precisa de autenticação
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) // Adiciona filtro de segurança
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())); // Configura CORS diretamente no filtro
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class); // Adiciona filtro de segurança
 
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174"));// Permite a origem do frontend
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With")); // Permite os cabeçalhos
-        configuration.setAllowCredentials(true); // Permite o envio de cookies e credenciais
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Aplica configuração a todas as rotas
-        return source;
     }
 
     @Bean

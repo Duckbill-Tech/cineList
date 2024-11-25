@@ -1,7 +1,7 @@
 // FETCH PARA CRIAR UM FILME
 export async function createFilme(filmeDTO) {
   try {
-    const response = await fetch(`http://localhost:8081/api/filmes`, {
+    const response = await fetch(`/api/filmes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +26,7 @@ export async function createFilme(filmeDTO) {
 // FETCH PARA PEGAR TODOS OS FILMES
 export async function getAllFilmes() {
   try {
-    const response = await fetch(`http://localhost:8081/api/filmes`, {
+    const response = await fetch(`/api/filmes`, {
       method: "GET",
       credentials: "include", // Adicionando credenciais (cookies)
     });
@@ -46,7 +46,7 @@ export async function getAllFilmes() {
 // FETCH PARA PEGAR UM FILME POR ID
 export async function getFilmeById(id) {
   try {
-    const response = await fetch(`http://localhost:8081/api/filmes/${id}`, {
+    const response = await fetch(`/api/filmes/${id}`, {
       method: "GET",
       credentials: "include", 
     });
@@ -66,7 +66,7 @@ export async function getFilmeById(id) {
 // FETCH PARA UPDATE FILME
 export async function updateFilme(id, filmeDTO) {
   try {
-    const response = await fetch(`http://localhost:8081/api/filmes/${id}`, {
+    const response = await fetch(`/api/filmes/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -91,7 +91,7 @@ export async function updateFilme(id, filmeDTO) {
 // FETCH PARA DELETE FILME
 export async function deleteFilme(id) {
   try {
-    const response = await fetch(`http://localhost:8081/api/filmes/${id}`, {
+    const response = await fetch(`/api/filmes/${id}`, {
       method: "DELETE",
       credentials: "include", 
     });

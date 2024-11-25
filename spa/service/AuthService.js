@@ -1,7 +1,7 @@
 // FETCH PARA LOGIN
 export async function login(email, senha) {
   try {
-    const response = await fetch("http://localhost:8081/auth/login", {
+    const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -25,7 +25,7 @@ export async function login(email, senha) {
 // FETCH PARA REGISTER
 export async function register(nome, email, cpf, senha) {
   try {
-    const response = await fetch("http://localhost:8081/auth/register", { 
+    const response = await fetch("/api/auth/register", { 
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +50,7 @@ export async function register(nome, email, cpf, senha) {
 // FETCH PARA RESET PASSWORD
 export async function resetPassword(newPassword) {
   try {
-    const response = await fetch(`http://localhost:8081/auth/reset-password`, {
+    const response = await fetch(`/api/auth/reset-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
