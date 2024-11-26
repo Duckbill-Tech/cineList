@@ -22,13 +22,6 @@ function AddMovie({ onAddMovieSubmit }) {
     }
   };
 
-  const handleInputChange = (event) => {
-    setTitulo(event.target.value);
-    if (feedback) {
-      setFeedback("");
-    }
-  };
-
   return (
     <div className="flex flex-col gap-4 max-w-4xl mx-auto p-6">
       <label htmlFor="movieTitle" className="sr-only">
@@ -41,7 +34,7 @@ function AddMovie({ onAddMovieSubmit }) {
           placeholder="Digite o título do filme"
           className="flex-grow px-4 py-2 rounded-md text-black"
           value={titulo}
-          onChange={handleInputChange}
+          onChange={(event) => setTitulo(event.target.value)}
           aria-required="true"
           aria-label="Digite o título do filme"
         />
@@ -54,17 +47,13 @@ function AddMovie({ onAddMovieSubmit }) {
         </button>
       </div>
 
-      {feedback && (
-        <div
-          aria-live="polite"
-          className={`text-sm mt-2 ${
-            feedback.includes("Erro") ? "text-red-500" : "text-green-500"
-          }`}
-          aria-label="Mensagem de feedback"
-        >
-          {feedback}
-        </div>
-      )}
+      <div
+        aria-live="polite"
+        className="text-sm text-black mt-2"
+        aria-label="Mensagem de feedback"
+      >
+        {feedback}
+      </div>
     </div>
   );
 }

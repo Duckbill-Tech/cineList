@@ -37,7 +37,7 @@ function Movies({
       >
         PARA ASSISTIR
       </h1>
-      <ul className="space-y-4 bg-amber-500 p-2 rounded-md font-josefin-slab text-s">
+      <ul className="space-y-4 bg-amber-500 p-2 rounded-md font-josefin-sans text-s">
         {movies.map((movie) => (
           <li key={movie.id} className="flex gap-2">
             <button

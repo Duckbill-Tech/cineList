@@ -133,7 +133,7 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
           <li key={movie.id} className="space-y-2" role="listitem">
             <div className="flex gap-2 items-center">
               <button
-                className="w-full text-left text-black bg-white p-2 rounded-md font-josefin-slab text-s"
+                className="w-full text-left text-black bg-white p-2 rounded-md font-josefin-sans text-s"
                 aria-label={`Título do filme: ${movie.titulo}`}
               >
                 {movie.titulo}
@@ -204,7 +204,7 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
       </ul>
       <button
         onClick={onClearAllMoviesSeen}
-        className="hover:text-black text-xs text-amber-500 py-2"
+        className="hover:text-black text-xs text-amber-500 py-2 font-josefin-sans"
         aria-label="Limpar todos os filmes da lista de assistidos"
       >
         Limpar Tudo
