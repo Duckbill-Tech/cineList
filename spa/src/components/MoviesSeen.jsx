@@ -25,148 +25,60 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
     fetchMovies();
   }, [setMoviesSeen]);
 
-  const handleRatingChange = async (id, rating) => {
-    try {
-      const movieToUpdate = moviesSeen.find((movie) => movie.id === id);
-      const updates = { ...movieToUpdate, nota: rating };
-
-      const updatedMovie = await updateFilme(id, updates);
-
-      setMoviesSeen((prevMoviesSeen) =>
-        prevMoviesSeen.map((movie) =>
-          movie.id === id ? updatedMovie : movie
-        )
-      );
-    } catch (error) {
-      console.error("Erro ao salvar a nota:", error);
-      alert("Erro ao salvar a avaliação. Tente novamente.");
-    }
-  };
-
-  const handleCommentChange = (id, comment) => {
-    setMoviesSeen((prevMoviesSeen) =>
-      prevMoviesSeen.map((movie) =>
-        movie.id === id ? { ...movie, descricao: comment } : movie
-      )
-    );
-  };
-
-  const handleCommentKeyPress = (id, e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      saveMovieUpdates(id);
-    }
-  };
-
-  const saveMovieUpdates = async (movieId) => {
-    const movieToUpdate = moviesSeen.find((movie) => movie.id === movieId);
-  
-    try {
-      const updatedMovie = await updateFilme(movieId, movieToUpdate);
-
-      setMoviesSeen((prevMoviesSeen) =>
-        prevMoviesSeen.map((movie) =>
-          movie.id === movieId ? updatedMovie : movie
-        )
-      );
-  
-      console.log("Comentário salvo com sucesso:", updatedMovie);
-    } catch (error) {
-      console.error("Erro ao salvar o comentário:", error);
-      alert("Erro ao salvar o comentário. Tente novamente.");
-    }
-  };
-  
-  const toggleForm = (id) => {
-    setOpenForm((prevOpenForm) => ({
-      ...prevOpenForm,
-      [id]: !prevOpenForm[id],
-    }));
-  };
-
-  const enableCommentEditing = (id) => {
-    setLockedFields((prev) => ({ ...prev, [id]: false }));
-  };
-
-  const onDeleteMovieSeenClick = async (movieId) => {
-    const confirmation = window.confirm("Tem certeza que deseja remover este filme?");
-    if (!confirmation) return;
-
-    try {
-      await deleteFilme(movieId);
-      setMoviesSeen((prevMoviesSeen) =>
-        prevMoviesSeen.filter((movie) => movie.id !== movieId)
-      );
-      console.log(`Filme com ID ${movieId} foi removido.`);
-    } catch (error) {
-      console.error("Erro ao deletar o filme assistido:", error);
-      alert("Não foi possível deletar o filme assistido. Tente novamente.");
-    }
-  };
-
-  const onClearAllMoviesSeen = async () => {
-    const confirmation = window.confirm(
-      "Tem certeza que deseja remover todos os filmes assistidos?"
-    );
-    if (!confirmation) return;
-
-    try {
-      await Promise.all(moviesSeen.map((movie) => deleteFilme(movie.id)));
-      setMoviesSeen([]);
-    } catch (error) {
-      console.error("Erro ao limpar a lista de filmes assistidos:", error);
-      alert("Não foi possível limpar a lista de filmes assistidos. Tente novamente.");
-    }
-  };
-
   return (
     <div
-      className="border border-amber-500 rounded-md p-4"
+      className="relative flex flex-col rounded-lg bg-amber-400 shadow-lg border border-black p-4"
       role="region"
       aria-label="Filmes assistidos"
     >
-      <h1 className="text-white text-xs text-left mb-2 font-josefin-sans tracking-widest">
+      <h1
+        className="text-white text-xs text-left mb-2 font-josefin-sans tracking-widest"
+        aria-live="polite"
+      >
         ASSISTIDOS
       </h1>
-      <ul className="space-y-4 bg-amber-500 p-2 rounded-md">
+      <ul className="flex flex-col gap-2">
         {moviesSeen.map((movie) => (
           <li key={movie.id} className="space-y-2" role="listitem">
-            <div className="flex gap-2 items-center">
-              <button
-                className="w-full text-left text-black bg-white p-2 rounded-md font-josefin-sans text-s"
-                aria-label={`Título do filme: ${movie.titulo}`}
-              >
+            <div className="flex items-center w-full rounded-md p-2 pl-3 bg-white bg-opacity-90 hover:bg-gray-300 hover:bg-opacity-30 transition-all">
+              <span className="flex-grow text-black">
                 {movie.titulo}
-              </button>
+              </span>
               <button
-                onClick={() => toggleForm(movie.id)}
-                className="text-black bg-white p-2 rounded-md"
+                onClick={() =>
+                  setOpenForm((prev) => ({
+                    ...prev,
+                    [movie.id]: !prev[movie.id],
+                  }))
+                }
+                className="rounded-md border border-transparent p-2 text-gray-600 hover:bg-gray-100 focus:bg-gray-100 active:bg-gray-200"
                 aria-label={`${
                   openForm[movie.id] ? "Fechar" : "Abrir"
                 } formulário para comentários do filme ${movie.titulo}`}
               >
-                {openForm[movie.id] ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                {openForm[movie.id] ? <ChevronUpIcon  className="w-5 h-5" aria-hidden="true"/> : <ChevronDownIcon  className="w-5 h-5" aria-hidden="true" />}
               </button>
               <button
-                onClick={() => onDeleteMovieSeenClick(movie.id)}
-                className="text-black bg-white p-2 rounded-md"
+                onClick={() => deleteFilme(movie.id)}
+                className="rounded-md border border-transparent p-2 border-amber-500 text-amber-500 hover:bg-red-100 focus:bg-red-100 active:bg-red-200"
                 aria-label={`Remover o filme ${movie.titulo} da lista de assistidos`}
               >
-                <TrashIcon aria-hidden="true" />
+                <TrashIcon className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
-
             {openForm[movie.id] && (
               <div
-                className="flex flex-col text-black bg-white p-2 rounded-md"
+                className="flex flex-col text-black bg-gray-50 p-2 rounded-md mt-2"
                 aria-live="polite"
               >
-                <label className="text-xs" htmlFor={`comment-${movie.id}`}>
-                  Comentário:
+                <label className="text-xs mb-1" htmlFor={`comment-${movie.id}`}>
+                  Análise:
                 </label>
                 {lockedFields[movie.id] ? (
                   <p
-                    onClick={() => enableCommentEditing(movie.id)}
+                    onClick={() =>
+                      setLockedFields((prev) => ({ ...prev, [movie.id]: false }))
+                    }
                     className="cursor-pointer p-1 border border-gray-300 rounded-md"
                     aria-label={`Comentário salvo para o filme ${movie.titulo}`}
                   >
@@ -175,15 +87,29 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
                 ) : (
                   <textarea
                     id={`comment-${movie.id}`}
-                    placeholder="Deixe um comentário"
+                    placeholder="O que você achou do filme?"
                     value={movie.descricao || ""}
                     onChange={(e) =>
-                      handleCommentChange(movie.id, e.target.value)
+                      setMoviesSeen((prevMoviesSeen) =>
+                        prevMoviesSeen.map((m) =>
+                          m.id === movie.id
+                            ? { ...m, descricao: e.target.value }
+                            : m
+                        )
+                      )
                     }
-                    onKeyDown={(e) => handleCommentKeyPress(movie.id, e)}
-                    className="p-2 border border-neutral-200 rounded-md resize-none"
-                    aria-label={`Campo de comentário para o filme ${movie.titulo}`}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const movieToUpdate = moviesSeen.find(
+                          (m) => m.id === movie.id
+                        );
+                        updateFilme(movie.id, movieToUpdate);
+                      }
+                    }}
+                    className="p-2 border border-gray-300 rounded-md resize-none bg-gray-100 text-sm"
                     rows="3"
+                    aria-label={`Campo de comentário para o filme ${movie.titulo}`}
                   />
                 )}
                 <label className="text-xs mt-2" htmlFor={`rating-${movie.id}`}>
@@ -192,7 +118,6 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
                 <ReactStars
                   count={5}
                   value={movie.nota || 0}
-                  onChange={(rating) => handleRatingChange(movie.id, rating)}
                   size={24}
                   color2={"#ffd700"}
                   half={true}
@@ -203,11 +128,11 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
         ))}
       </ul>
       <button
-        onClick={onClearAllMoviesSeen}
-        className="hover:text-black text-xs text-amber-500 py-2 font-josefin-sans"
+        onClick={() => setMoviesSeen([])}
+        className="mt-4 text-white hover:text-yellow-700 text-sm underline"
         aria-label="Limpar todos os filmes da lista de assistidos"
       >
-        Limpar Tudo
+        Limpar tudo
       </button>
     </div>
   );
