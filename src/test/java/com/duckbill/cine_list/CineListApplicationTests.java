@@ -12,5 +12,6 @@ class CineListApplicationTests {
 	void contextLoads() {
 		// Teste básico para verificar se o contexto carrega corretamente
 		// Este teste garante que a aplicação inicia sem erros
+		// LEMBRE-SE QUE PARA RODAR A APLICAÇÃO PRECISAMOS DAS VARIAVEIS DE AMBIENTE!
 	}
 }
