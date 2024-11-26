@@ -23,7 +23,7 @@ public class FilmeController {
     @Autowired
     private FilmeService filmeService;
 
-    private UUID getUsuarioIdFromToken(HttpServletRequest request) {
+    UUID getUsuarioIdFromToken(HttpServletRequest request) {
         // Busca o token no cookie
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
