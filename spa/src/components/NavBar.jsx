@@ -1,102 +1,98 @@
 import React, { useState, useEffect, useRef } from "react";
-import { House, Popcorn, Ellipsis, CircleUser } from "lucide-react";
+import { House, Popcorn, Ellipsis } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 function NavBar() {
   const navigate = useNavigate();
-  const [showMenu, setShowMenu] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [searchParams] = useSearchParams();
-  const email = searchParams.get("email");
-  const menuRef = useRef(null);
+  const email = searchParams.get("email") || "Usuário";
+  const dropdownRef = useRef(null);
+  const nome = searchParams.get("nome");
 
   const handleScrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
       section.scrollIntoView({ behavior: "smooth", block: "start" });
-      console.log(`Rolando para a seção: ${sectionId}`);
     } else {
       console.error(`Seção com ID "${sectionId}" não encontrada.`);
     }
   };
 
-  const toggleUserMenu = () => setShowMenu((prev) => !prev);
-
   const logout = () => navigate("/");
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowMenu(false);
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   return (
-    <nav
-      className="bg-black p-4 fixed top-0 left-0 w-full shadow-md z-50"
-      role="navigation"
-      aria-label="Barra de Navegação"
-    >
+    <nav className="bg-black p-4 fixed top-0 left-0 w-full shadow-md z-50">
       <div className="flex justify-between items-center max-w-7xl mx-auto">
         <ul className="flex space-x-6 text-white">
           <NavButton
             onClick={() => handleScrollToSection("cinelist")}
-            icon={<House aria-hidden="true" />}
-            label="Ir para seção principal do CINELIST"
+            label="Seção Principal"
+            icon={<House />}
           />
           <NavButton
             onClick={() => handleScrollToSection("listas")}
-            icon={<Popcorn aria-hidden="true" />}
-            label="Ir para a seção de listas"
+            label="Listas"
+            icon={<Popcorn />}
           />
           <NavButton
             onClick={() => handleScrollToSection("sobreNos")}
-            icon={<Ellipsis aria-hidden="true" />}
-            label="Ir para a seção sobre nós"
+            label="Sobre Nós"
+            icon={<Ellipsis />}
           />
         </ul>
 
-        <div className="flex items-center space-x-2 relative" ref={menuRef}>
-          <p
-            className="text-white truncate max-w-[150px] overflow-hidden text-ellipsis"
-            title={email || "Usuário"}
-          >
-            {email || "Usuário"}
-          </p>
+        <div className="relative" ref={dropdownRef}>
           <button
-            onClick={toggleUserMenu}
-            className="text-white hover:text-amber-400"
-            aria-label="Menu do usuário"
-            aria-expanded={showMenu}
+            onClick={() => setShowDropdown((prev) => !prev)}
+            className="flex items-center space-x-2 text-white hover:text-amber-400"
+            aria-expanded={showDropdown}
             aria-haspopup="true"
           >
-            <CircleUser aria-hidden="true" />
+            <span className="truncate max-w-[150px]" title={email}>
+              {nome}
+            </span>
+            <svg
+              className="w-5 h-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                clipRule="evenodd"
+              />
+            </svg>
           </button>
 
-          {showMenu && (
+          {showDropdown && (
             <div
-              className="absolute right-0 mt-2 bg-black text-white border border-gray-700 rounded shadow-md z-50"
+              className="absolute right-0 mt-2 bg-black text-white border border-gray-700 rounded shadow-md w-48"
               role="menu"
-              aria-label="Opções do menu do usuário"
             >
-              <ul className="flex flex-col">
-                <li>
-                  <button
-                    onClick={logout}
-                    className="block px-4 py-2 hover:bg-gray-800 text-left w-full"
-                    role="menuitem"
-                    aria-label="Sair e voltar à página de login"
-                  >
-                    Sair
-                  </button>
-                </li>
-              </ul>
+              <div className="px-4 py-2 border-b border-gray-600 text-sm">
+                {email}
+              </div>
+              <button
+                onClick={logout}
+                className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-800"
+              >
+                Sair
+              </button>
             </div>
           )}
         </div>
