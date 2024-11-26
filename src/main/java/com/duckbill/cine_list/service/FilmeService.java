@@ -14,7 +14,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @Service
 public class FilmeService {
 
@@ -38,7 +37,7 @@ public class FilmeService {
         filme.setTitulo(filmeDTO.getTitulo());
         filme.setDescricao(filmeDTO.getDescricao());
         filme.setNota(filmeDTO.getNota());
-        filme.setCreatedBy(usuario);  // Define o usuário como `createdBy`
+        filme.setCreatedBy(usuario);
 
         Filme savedFilme = filmeRepository.save(filme);
         return filmeMapper.toDto(savedFilme);
