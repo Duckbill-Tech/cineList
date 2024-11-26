@@ -39,8 +39,6 @@ public class Filme {
 
 
     // Getters e Setters
-
-
     public UUID getId() {
         return id;
     }
