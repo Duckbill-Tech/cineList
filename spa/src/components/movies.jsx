@@ -1,4 +1,4 @@
-import { TrashIcon } from "lucide-react";
+import { TrashIcon, CheckCircleIcon } from "lucide-react";
 import { updateFilme } from "../../service/FilmeService";
 
 function Movies({
@@ -7,17 +7,16 @@ function Movies({
   onDeleteMovieClick,
   onClearAllMovies,
 }) {
-
   const onCompleteMovieClick = async (movieId) => {
     try {
       const updates = {
         completedAt: new Date().toISOString(),
         titulo: movies.find((movie) => movie.id === movieId)?.titulo,
       };
-  
+
       const updatedMovie = await updateFilme(movieId, updates);
-      console.log("Atualizar o filme com sucesso:", updatedMovie);
-  
+      console.log("Filme atualizado com sucesso:", updatedMovie);
+
       onMovieClick(movieId);
     } catch (error) {
       console.error("Erro ao marcar um filme como assistido:", error);
@@ -26,43 +25,46 @@ function Movies({
   };
 
   return (
-    <div
-      className="border border-amber-500 rounded-md p-4"
-      role="region"
-      aria-label="Filmes para assistir"
-    >
+    <div className="relative flex flex-col rounded-lg bg-amber-400 shadow-lg border border-black p-4">
       <h1
         className="text-white text-xs text-left mb-2 font-josefin-sans tracking-widest"
         aria-live="polite"
       >
-        PARA ASSISTIR
+      PARA ASSISTIR
       </h1>
-      <ul className="space-y-4 bg-amber-500 p-2 rounded-md font-josefin-sans text-s">
+      <nav className="flex flex-col gap-2">
         {movies.map((movie) => (
-          <li key={movie.id} className="flex gap-2">
+          <div
+            key={movie.id}
+            className="flex items-center w-full rounded-md p-2 pl-3 bg-white bg-opacity-90 hover:bg-gray-300 hover:bg-opacity-30 transition-all"
+          >
+            <span className="flex-grow text-black">{movie.titulo}</span>
             <button
-              className="w-full text-left flex text-black bg-white p-2 rounded-md"
               onClick={() => onCompleteMovieClick(movie.id)}
+              className="rounded-md border border-transparent p-2 text-green-600 hover:bg-green-100 focus:bg-green-100 active:bg-green-200"
               aria-label={`Marcar "${movie.titulo}" como assistido`}
             >
-              {movie.titulo}
+              <CheckCircleIcon className="w-5 h-5" aria-hidden="true" />
             </button>
             <button
-              onClick={() => onDeleteMovieClick(movie.id)}
-              className="text-black bg-white p-2 rounded-md"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteMovieClick(movie.id);
+              }}
+              className="rounded-md border border-transparent p-2 border-amber-500 text-amber-500 hover:bg-red-100 focus:bg-red-100 active:bg-red-200"
               aria-label={`Remover "${movie.titulo}" da lista`}
             >
-              <TrashIcon aria-hidden="true" />
+              <TrashIcon className="w-5 h-5" aria-hidden="true" />
             </button>
-          </li>
+          </div>
         ))}
-      </ul>
+      </nav>
       <button
         onClick={onClearAllMovies}
-        className="hover:text-black text-xs text-amber-500 py-2 font-josefin-sans"
+        className="mt-4 text-white hover:text-white text-sm underline"
         aria-label="Limpar toda a lista de filmes para assistir"
       >
-        Limpar Tudo
+        Limpar tudo
       </button>
     </div>
   );
