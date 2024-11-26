@@ -4,7 +4,7 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { deleteFilme, updateFilme, getAllFilmes } from "../../service/FilmeService";
+import { deleteFilme, getAllFilmes } from "../../service/FilmeService";
 import ReactStars from "react-stars";
 
 function MoviesSeen({ moviesSeen, setMoviesSeen }) {
@@ -25,6 +25,38 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
     fetchMovies();
   }, [setMoviesSeen]);
 
+  const handleDeleteMovie = async (movieId) => {
+    const confirmation = window.confirm(
+      "Você tem certeza que deseja excluir este filme?"
+    );
+    if (!confirmation) return;
+
+    try {
+      await deleteFilme(movieId);
+      setMoviesSeen((prevMoviesSeen) =>
+        prevMoviesSeen.filter((movie) => movie.id !== movieId)
+      );
+    } catch (error) {
+      console.error("Erro ao deletar o filme:", error);
+      alert("Erro ao deletar o filme. Tente novamente.");
+    }
+  };
+
+  const handleClearAllMovies = async () => {
+    const confirmation = window.confirm(
+      "Você tem certeza que deseja excluir todos os filmes da lista?"
+    );
+    if (!confirmation) return;
+
+    try {
+      await Promise.all(moviesSeen.map((movie) => deleteFilme(movie.id)));
+      setMoviesSeen([]);
+    } catch (error) {
+      console.error("Erro ao limpar a lista de filmes assistidos:", error);
+      alert("Erro ao limpar a lista. Tente novamente.");
+    }
+  };
+
   return (
     <div
       className="relative flex flex-col rounded-lg bg-amber-400 shadow-lg border border-black p-4"
@@ -41,9 +73,7 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
         {moviesSeen.map((movie) => (
           <li key={movie.id} className="space-y-2" role="listitem">
             <div className="flex items-center w-full rounded-md p-2 pl-3 bg-white bg-opacity-90 hover:bg-gray-300 hover:bg-opacity-30 transition-all">
-              <span className="flex-grow text-black">
-                {movie.titulo}
-              </span>
+              <span className="flex-grow text-black">{movie.titulo}</span>
               <button
                 onClick={() =>
                   setOpenForm((prev) => ({
@@ -56,10 +86,14 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
                   openForm[movie.id] ? "Fechar" : "Abrir"
                 } formulário para comentários do filme ${movie.titulo}`}
               >
-                {openForm[movie.id] ? <ChevronUpIcon  className="w-5 h-5" aria-hidden="true"/> : <ChevronDownIcon  className="w-5 h-5" aria-hidden="true" />}
+                {openForm[movie.id] ? (
+                  <ChevronUpIcon className="w-5 h-5" aria-hidden="true" />
+                ) : (
+                  <ChevronDownIcon className="w-5 h-5" aria-hidden="true" />
+                )}
               </button>
               <button
-                onClick={() => deleteFilme(movie.id)}
+                onClick={() => handleDeleteMovie(movie.id)}
                 className="rounded-md border border-transparent p-2 border-amber-500 text-amber-500 hover:bg-red-100 focus:bg-red-100 active:bg-red-200"
                 aria-label={`Remover o filme ${movie.titulo} da lista de assistidos`}
               >
@@ -98,15 +132,6 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
                         )
                       )
                     }
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const movieToUpdate = moviesSeen.find(
-                          (m) => m.id === movie.id
-                        );
-                        updateFilme(movie.id, movieToUpdate);
-                      }
-                    }}
                     className="p-2 border border-gray-300 rounded-md resize-none bg-gray-100 text-sm"
                     rows="3"
                     aria-label={`Campo de comentário para o filme ${movie.titulo}`}
@@ -128,7 +153,7 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
         ))}
       </ul>
       <button
-        onClick={() => setMoviesSeen([])}
+        onClick={handleClearAllMovies}
         className="mt-4 text-white hover:text-yellow-700 text-sm underline"
         aria-label="Limpar todos os filmes da lista de assistidos"
       >
