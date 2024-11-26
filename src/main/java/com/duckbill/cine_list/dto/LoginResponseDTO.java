@@ -10,7 +10,8 @@ public class LoginResponseDTO {
         this.emailUsuario = emailUsuario;
         this.token = token;
     }
-
+    
+    // Getters e Setters
     public String getToken() {
         return token;
     }

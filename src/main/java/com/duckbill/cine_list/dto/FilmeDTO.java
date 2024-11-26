@@ -36,7 +36,6 @@ public class FilmeDTO {
     }
 
     // Getters e Setters
-
     public UUID getId() {
         return id;
     }

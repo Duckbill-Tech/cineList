@@ -40,6 +40,7 @@ public class UsuarioDTO {
         this.deletedAt = deletedAt;
     }
 
+    // Getters e Setters
     public UUID getId() {
         return id;
     }
