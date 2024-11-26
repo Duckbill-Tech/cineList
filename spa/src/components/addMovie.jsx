@@ -23,28 +23,29 @@ function AddMovie({ onAddMovieSubmit }) {
   };
 
   return (
-    <div className="flex flex-col gap-4 max-w-4xl mx-auto p-6">
+    <div className="flex flex-col gap-2 max-w-4xl mx-auto p-6">
       <label htmlFor="movieTitle" className="sr-only">
         Título do Filme
       </label>
-      <div className="flex gap-4 w-full">
+      <div className="flex gap-2 w-full">
         <input
           id="movieTitle"
           type="text"
-          placeholder="Digite o título do filme"
-          className="flex-grow px-4 py-2 rounded-md text-black"
+          placeholder="Digite o nome do filme"
+          className="flex-grow px-5 py-2.5 text-sm rounded-md text-blacktext-sm me-2 mb-2 text-black"
           value={titulo}
           onChange={(event) => setTitulo(event.target.value)}
           aria-required="true"
-          aria-label="Digite o título do filme"
+          aria-label="Digite o nome do filme"
         />
         <button
           onClick={handleAddMovie}
-          className="border border-amber-500 text-amber-500 px-4 py-2 rounded-md font-medium"
+          type="button"
+          className="text-yellow-400 hover:text-white border border-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-yellow-300 dark:text-yellow-300 dark:hover:text-white dark:hover:bg-yellow-400 dark:focus:ring-yellow-900"
           aria-label="Adicionar filme à lista"
         >
           Adicionar
-        </button>
+      </button>
       </div>
 
       <div
