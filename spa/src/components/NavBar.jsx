@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { House, Popcorn, Ellipsis, CircleUser } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import PropTypes from "prop-types";
 
 function NavBar() {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
-  const menuRef = useRef(null); // Referência para o menu do usuário - TODO: precisamos adicionar aqui uma chamada/rota para o valor do email.
+  const menuRef = useRef(null);
 
   const handleScrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
@@ -119,11 +118,5 @@ function NavButton({ onClick, icon, label }) {
     </li>
   );
 }
-
-NavButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
-  icon: PropTypes.node.isRequired,
-  label: PropTypes.string.isRequired,
-};
 
 export default NavBar;

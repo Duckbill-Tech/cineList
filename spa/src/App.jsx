@@ -3,8 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Registro from "./pages/Registro";
-import RecuperarSenha from "./pages/RecuperarSenha";
-import RecuperarSenhaToken from "./pages/RecuperarSenhaToken";
 import Layout from "./components/Layout";
 import "./index.css";
 
@@ -63,25 +61,6 @@ function App() {
           element={
             <Layout>
               <Registro />
-            </Layout>
-          }
-        />
-
-        {/* Rota para a página de recuperação de senha */}
-        <Route
-          path="/recuperar-senha"
-          element={
-            <Layout>
-              <RecuperarSenha />
-            </Layout>
-          }
-        />
-        {/* Rota para a página de redefinição de senha */}
-        <Route
-          path="/reset-password"
-          element={
-            <Layout>
-              <RecuperarSenhaToken />
             </Layout>
           }
         />

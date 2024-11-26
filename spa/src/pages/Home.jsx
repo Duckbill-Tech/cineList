@@ -28,11 +28,9 @@ function Home() {
       try {
         const filmes = await getAllFilmes();
   
-        // Separar filmes completados e não completados
         const filmesNaoCompletados = filmes.filter((filme) => !filme.completedAt);
         const filmesCompletados = filmes.filter((filme) => filme.completedAt);
   
-        // Atualizar os estados
         setMovies(filmesNaoCompletados);
         setMoviesSeen(filmesCompletados);
       } catch (error) {
@@ -66,10 +64,8 @@ function Home() {
   
   const onDeleteMovieClick = async (movieId) => {
     try {
-      // Envia a requisição para deletar o filme no backend
       await deleteFilme(movieId);
   
-      // Atualiza o estado local para remover o filme
       setMovies((prevMovies) => prevMovies.filter((movie) => movie.id !== movieId));
     } catch (error) {
       console.error("Erro ao deletar o filme:", error);
@@ -79,10 +75,8 @@ function Home() {
   
   const onDeleteMovieSeenClick = async (movieId) => {
     try {
-      // Envia a requisição para deletar o filme no backend
       await deleteFilme(movieId);
-  
-      // Atualiza o estado local para remover o filme
+
       setMoviesSeen((prevMoviesSeen) => prevMoviesSeen.filter((movie) => movie.id !== movieId));
     } catch (error) {
       console.error("Erro ao deletar o filme assistido:", error);
@@ -92,10 +86,7 @@ function Home() {
 
   const onClearAllMovies = async () => {
     try {
-      // Deleta todos os filmes para assistir no backend
       await Promise.all(movies.map((movie) => deleteFilme(movie.id)));
-  
-      // Limpa o estado local
       setMovies([]);
     } catch (error) {
       console.error("Erro ao limpar a lista de filmes:", error);
@@ -105,10 +96,8 @@ function Home() {
   
   const onClearAllMoviesSeen = async () => {
     try {
-      // Deleta todos os filmes assistidos no backend
       await Promise.all(moviesSeen.map((movie) => deleteFilme(movie.id)));
-  
-      // Limpa o estado local
+
       setMoviesSeen([]);
     } catch (error) {
       console.error("Erro ao limpar a lista de filmes assistidos:", error);

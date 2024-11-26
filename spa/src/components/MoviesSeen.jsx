@@ -6,6 +6,7 @@ import {
 import { useState, useEffect } from "react";
 import { deleteFilme, updateFilme, getAllFilmes } from "../../service/FilmeService";
 import ReactStars from "react-stars";
+
 function MoviesSeen({ moviesSeen, setMoviesSeen }) {
   const [openForm, setOpenForm] = useState({});
   const [lockedFields, setLockedFields] = useState({});

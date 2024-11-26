@@ -33,12 +33,6 @@ function Login() {
     navigate("/registro");
   };
 
-
-  // TODO:
-  // const onForgotPassword = () => {
-  //   navigate("/recuperar-senha");
-  // };
-
   return (
     <div className="w-full bg-black flex justify-center items-center flex-grow py-10">
       <div className="w-full max-w-md space-y-6 p-8">
@@ -97,14 +91,6 @@ function Login() {
             >
               Ainda não sou cadastrada/o
             </button>
-
-            {/* <button
-              type="button"
-              onClick={onForgotPassword}
-              className="text-sm text-amber-500 self-center"
-            >
-              Esqueci minha senha
-            </button> */}
           </div>
         </form>
       </div>
