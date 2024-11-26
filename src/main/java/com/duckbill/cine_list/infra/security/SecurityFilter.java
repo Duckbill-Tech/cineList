@@ -29,7 +29,6 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-
         // Recupera e valida o token JWT
         String token = this.recoverTokenFromCookie(request);
         String email = (token != null) ? tokenService.validateToken(token) : null;
