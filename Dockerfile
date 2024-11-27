@@ -41,7 +41,7 @@ WORKDIR /app
 COPY --from=backend-builder /app/target/*.jar app.jar
 
 # Porta que a aplicação irá expor
-EXPOSE 8080
+EXPOSE 8081
 
 # Comando para executar a aplicação
 ENTRYPOINT ["java", "-jar", "app.jar"]
