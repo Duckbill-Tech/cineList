@@ -1,8 +1,4 @@
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  TrashIcon,
-} from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon, TrashIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { deleteFilme, getAllFilmes } from "../../service/FilmeService";
 import ReactStars from "react-stars";
@@ -24,6 +20,36 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
 
     fetchMovies();
   }, [setMoviesSeen]);
+
+  const handleUpdateMovie = async (movieId, updatedFields) => {
+    try {
+      const response = await fetch(`/api/filmes/${movieId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedFields),
+      });
+
+      // Verifica se a resposta é ok (status 200-299) e se o corpo não está vazio
+      if (!response.ok) {
+        throw new Error("Erro ao atualizar o filme");
+      }
+
+      // Apenas tenta fazer response.json() se a resposta não for vazia
+      const updatedMovie = response.status === 204 ? {} : await response.json();
+
+      // Atualizar o estado local após o sucesso
+      setMoviesSeen((prevMoviesSeen) =>
+        prevMoviesSeen.map((movie) =>
+          movie.id === movieId ? { ...movie, ...updatedMovie } : movie
+        )
+      );
+    } catch (error) {
+      console.error("Erro ao atualizar o filme:", error);
+      alert("Erro ao salvar os dados. Tente novamente.");
+    }
+  };
 
   const handleDeleteMovie = async (movieId) => {
     const confirmation = window.confirm(
@@ -111,7 +137,10 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
                 {lockedFields[movie.id] ? (
                   <p
                     onClick={() =>
-                      setLockedFields((prev) => ({ ...prev, [movie.id]: false }))
+                      setLockedFields((prev) => ({
+                        ...prev,
+                        [movie.id]: false,
+                      }))
                     }
                     className="cursor-pointer p-1 border border-gray-300 rounded-md"
                     aria-label={`Comentário salvo para o filme ${movie.titulo}`}
@@ -132,6 +161,10 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
                         )
                       )
                     }
+                    onBlur={(e) => {
+                      const newDescricao = e.target.value;
+                      handleUpdateMovie(movie.id, { descricao: newDescricao });
+                    }}
                     className="p-2 border border-gray-300 rounded-md resize-none bg-gray-100 text-sm"
                     rows="3"
                     aria-label={`Campo de comentário para o filme ${movie.titulo}`}
