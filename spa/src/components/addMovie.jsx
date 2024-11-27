@@ -35,6 +35,11 @@ function AddMovie({ onAddMovieSubmit }) {
           className="flex-grow px-5 py-2.5 text-sm rounded-md text-blacktext-sm me-2 mb-2 text-black"
           value={titulo}
           onChange={(event) => setTitulo(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              handleAddMovie(event);
+            }
+          }}
           aria-required="true"
           aria-label="Digite o nome do filme"
         />
@@ -45,7 +50,7 @@ function AddMovie({ onAddMovieSubmit }) {
           aria-label="Adicionar filme à lista"
         >
           Adicionar
-      </button>
+        </button>
       </div>
 
       <div
