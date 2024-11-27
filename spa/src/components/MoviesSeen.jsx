@@ -1,6 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon, TrashIcon } from "lucide-react";
 import { useState, useEffect } from "react";
-import { deleteFilme, getAllFilmes } from "../../service/FilmeService";
+import { deleteFilme, getAllFilmes, updateFilme} from "../../service/FilmeService";
 import ReactStars from "react-stars";
 
 function MoviesSeen({ moviesSeen, setMoviesSeen }) {
@@ -21,33 +21,15 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
     fetchMovies();
   }, [setMoviesSeen]);
 
-  const handleUpdateMovie = async (movieId, updatedFields) => {
+  const handleSaveComment = async (movie) => {
     try {
-      const response = await fetch(`/api/filmes/${movieId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedFields),
-      });
-
-      // Verifica se a resposta é ok (status 200-299) e se o corpo não está vazio
-      if (!response.ok) {
-        throw new Error("Erro ao atualizar o filme");
-      }
-
-      // Apenas tenta fazer response.json() se a resposta não for vazia
-      const updatedMovie = response.status === 204 ? {} : await response.json();
-
-      // Atualizar o estado local após o sucesso
+      const updatedMovie = await updateFilme(movie.id, movie);
       setMoviesSeen((prevMoviesSeen) =>
-        prevMoviesSeen.map((movie) =>
-          movie.id === movieId ? { ...movie, ...updatedMovie } : movie
-        )
+        prevMoviesSeen.map((m) => (m.id === updatedMovie.id ? updatedMovie : m))
       );
     } catch (error) {
-      console.error("Erro ao atualizar o filme:", error);
-      alert("Erro ao salvar os dados. Tente novamente.");
+      console.error("Erro ao salvar comentário:", error);
+      alert("Erro ao salvar comentário. Tente novamente.");
     }
   };
 
@@ -148,27 +130,21 @@ function MoviesSeen({ moviesSeen, setMoviesSeen }) {
                     {movie.descricao || "Clique para adicionar um comentário"}
                   </p>
                 ) : (
-                  <textarea
-                    id={`comment-${movie.id}`}
-                    placeholder="O que você achou do filme?"
-                    value={movie.descricao || ""}
-                    onChange={(e) =>
-                      setMoviesSeen((prevMoviesSeen) =>
-                        prevMoviesSeen.map((m) =>
-                          m.id === movie.id
-                            ? { ...m, descricao: e.target.value }
-                            : m
-                        )
+                <textarea
+                  id={`comment-${movie.id}`}
+                  placeholder="O que você achou do filme?"
+                  value={movie.descricao || ""}
+                  onChange={(e) =>
+                    setMoviesSeen((prevMoviesSeen) =>
+                      prevMoviesSeen.map((m) =>
+                        m.id === movie.id ? { ...m, descricao: e.target.value } : m
                       )
-                    }
-                    onBlur={(e) => {
-                      const newDescricao = e.target.value;
-                      handleUpdateMovie(movie.id, { descricao: newDescricao });
-                    }}
-                    className="p-2 border border-gray-300 rounded-md resize-none bg-gray-100 text-sm"
-                    rows="3"
-                    aria-label={`Campo de comentário para o filme ${movie.titulo}`}
-                  />
+                    )
+                  }
+                  onBlur={() => handleSaveComment(movie)}
+                  className="p-2 border border-gray-300 rounded-md resize-none bg-gray-100 text-sm"
+                  rows="3"
+                />
                 )}
                 <label className="text-xs mt-2" htmlFor={`rating-${movie.id}`}>
                   Nota:
